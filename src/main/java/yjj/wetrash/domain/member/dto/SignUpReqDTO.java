@@ -9,14 +9,11 @@ import lombok.*;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.Role;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpDTO {
+public class SignUpReqDTO {
 
     @NotBlank(message = "이메일은 필수 항목입니다.")
     @Email(message = "유효한 이메일 주소를 입력해주세요.")
@@ -34,7 +31,7 @@ public class SignUpDTO {
     private Role role;
 
     @Builder
-    public SignUpDTO(String email, String password, String nickname){
+    public SignUpReqDTO(String email, String password, String nickname){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -43,7 +40,7 @@ public class SignUpDTO {
     public Member toEntity(String encPassword){
         return Member.builder()
                 .email(email)
-                .password(password)
+                .password(encPassword)
                 .nickname(nickname)
                 .role(Role.ROLE_USER)
                 .build();

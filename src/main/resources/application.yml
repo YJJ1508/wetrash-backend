@@ -7,10 +7,34 @@ spring:
     password: root1234
   jpa:
     hibernate:
-      ddl-auto: create-drop #? ??? ???? ?? ???? ?? ???
+      ddl-auto: create-drop
     properties:
-      hibernate:  #Hibernate? ??? ?? ?????? ???? crud ????
-        show_sql: true #jpa ??? ?? ??
-        format_sql: true #Hibernate? ??? SQL ??? ????? ??? ???? ??
+      hibernate:
+        show_sql: true
+        format_sql: true
+    open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+#  web:
+#    resources:
+#      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
 
-
+springdoc:
+  swagger-ui:
+    url: /v3/api-docs
+    path: /swagger-ui/index.html #swagger ui 접근 경로
+    operations-sorter: alpha #API를 알파벳 순서대로 정렬
+    tags-sorter: alpha #태그 알파벳 순서 정렬
+  api-docs:
+    path: /v3/api-docs #api 문서 경로 설정
+    enabled: true #swagger api문서 활성화
+  show-actuator: true #spring boot actuator 엔드포인트도 swagger에 표시
+  packages-to-scan: yjj.wetrash.domain.member.controller
+jwt:
+  secret: 93FzaTY0U2VjcmV0S2u5Rm9yU2anpbF0dXJlUeVdcG9zZXj=
+  expiration: 86400000 # 24시간
+logging:
+  level:
+    org.springframework.security: DEBUG
