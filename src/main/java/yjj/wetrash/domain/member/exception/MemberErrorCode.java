@@ -13,12 +13,11 @@ public enum MemberErrorCode implements ErrorCode {
 
     //NOT_FOUND(404) 존재 하지 않는 값일 때
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
-    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 Refresh Token입니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "세션이 만료되었습니다. 다시 로그인해주세요."),
 
     //UNAUTHORIZED(401) 값이 일치 하지 않는 경우
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
-    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "토큰의 유저 정보가 일치하지 않습니다.");
-
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 값입니다. 다시 로그인해주세요.");
 
     private final HttpStatus status;
     private final String message;

@@ -42,7 +42,7 @@ public class SignUpReqDTO {
                 .email(email)
                 .password(encPassword)
                 .nickname(nickname)
-                .role(Role.ROLE_USER)
+                .role(Role.USER)
                 .build();
     }
 

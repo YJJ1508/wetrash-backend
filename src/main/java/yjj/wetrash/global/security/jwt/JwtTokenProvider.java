@@ -26,7 +26,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000*60*30; //30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000*60*24*7; //7일
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000*60*24*7; //7일1000*60*24*7
     private static final long THREE_DAYS = 1000 * 60 * 60 * 24 * 3;  // 3일
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
@@ -107,12 +107,12 @@ public class JwtTokenProvider {
         토큰 검증
      */
     //토큰에서 claim 해석(parsing) & 검증 객체 생성
-    private Claims parseClaims(String accessToken){
+    public Claims parseClaims(String token){
         try{
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(accessToken)
+                    .parseClaimsJws(token)
                     .getBody(); //claim 추출
         }catch (ExpiredJwtException e){
             return e.getClaims();   //만료된 토큰도 반환

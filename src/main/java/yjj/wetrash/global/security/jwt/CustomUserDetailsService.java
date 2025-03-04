@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(member.getEmail())
                 .password(member.getPassword())
-                .roles(member.getRole().name())
+                .roles(member.getRole().name()) //내부적으로 ROLE_ 자동 추가
                 .build();
     }
 }

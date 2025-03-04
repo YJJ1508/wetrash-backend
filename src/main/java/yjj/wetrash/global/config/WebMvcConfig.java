@@ -1,4 +1,4 @@
-package yjj.wetrash.global.security.config;
+package yjj.wetrash.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
