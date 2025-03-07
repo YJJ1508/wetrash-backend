@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import yjj.wetrash.global.security.jwt.JwtAuthenticationFilter;
 import yjj.wetrash.global.security.jwt.JwtTokenProvider;
+import yjj.wetrash.global.security.oauth.CustomOAuth2UserService;
+import yjj.wetrash.global.security.oauth.OAuth2SuccessHandler;
 
 import java.util.List;
 
@@ -22,6 +24,8 @@ import java.util.List;
 public class WebSecurityConfig {
 
     private final JwtTokenProvider tokenProvider;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private static final String[] SWAGGER = {
             "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/api-docs/**",
             "/webjars/**", "/swagger-resources/**", "/swagger-resources", "/configuration/ui",
@@ -49,6 +53,12 @@ public class WebSecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/user/**").permitAll()
                         .anyRequest().authenticated());
+        http
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
+                );
         http
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),
                         UsernamePasswordAuthenticationFilter.class);

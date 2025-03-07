@@ -10,9 +10,7 @@ import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.Role;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpReqDTO {
 
     @NotBlank(message = "이메일은 필수 항목입니다.")
@@ -30,18 +28,14 @@ public class SignUpReqDTO {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Builder
-    public SignUpReqDTO(String email, String password, String nickname){
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-    }
 
     public Member toEntity(String encPassword){
         return Member.builder()
                 .email(email)
                 .password(encPassword)
                 .nickname(nickname)
+                .provider("null") //자체 회원가입
+                .profile("null") //임시
                 .role(Role.USER)
                 .build();
     }

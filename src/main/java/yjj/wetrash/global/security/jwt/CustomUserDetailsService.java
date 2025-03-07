@@ -11,6 +11,7 @@ import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.global.exception.CustomException;
+import yjj.wetrash.global.security.CustomDetails;
 
 import java.util.List;
 
@@ -22,15 +23,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(email)
-                .map(this::createUserDetails)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        return new CustomDetails(member);   //통합 Authentication 객체
     }
-    private UserDetails createUserDetails(Member member){
-        return User.builder()
-                .username(member.getEmail())
-                .password(member.getPassword())
-                .roles(member.getRole().name()) //내부적으로 ROLE_ 자동 추가
-                .build();
-    }
+//    private UserDetails createUserDetails(Member member){
+//        return User.builder()
+//                .username(member.getEmail())
+//                .password(member.getPassword())
+//                .roles(member.getRole().name()) //내부적으로 ROLE_ 자동 추가
+//                .build();
+//    }
+
 }

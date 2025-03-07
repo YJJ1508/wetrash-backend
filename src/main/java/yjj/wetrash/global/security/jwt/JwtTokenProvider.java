@@ -14,6 +14,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.Role;
+import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
 
 import java.security.Key;
@@ -82,7 +85,6 @@ public class JwtTokenProvider {
         return claims.getExpiration().getTime();
     }
 
-
     /*
         토큰에서 회원 정보 추출
      */
@@ -92,13 +94,16 @@ public class JwtTokenProvider {
         if(claims.get(AUTHORITIES_KEY)==null){
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
-
         //권한 정보 추출
         String authority = claims.get(AUTHORITIES_KEY).toString(); //단일 권한
         Collection<? extends GrantedAuthority> authorities =
                 Collections.singletonList(new SimpleGrantedAuthority(authority));
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        String email = (String) claims.get("email");
+        String roleStr = (String) claims.get("role");
+        Role role = Role.valueOf(roleStr);
+        Member member = Member.builder().email(email).role(role).build();
+        CustomDetails principal = new CustomDetails(member);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

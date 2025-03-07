@@ -30,8 +30,9 @@ public class Member {
     @Enumerated(EnumType.STRING) //string타입으로 변환하여 db저장한다.
     private Role role;
 
-    @Column(name = "profile_url")
-    private String profileUrl;
+    private String provider; //구글,네이버,카카오,자체 로그인
+
+    private String profile;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -56,11 +57,13 @@ public class Member {
 
 
     @Builder
-    public Member(String email, String password, String nickname, Role role){
+    public Member(String email, String password, String nickname, Role role, String profile, String provider){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.profile = profile;
         this.role = role;
+        this.provider = provider;
     }
 
 }
