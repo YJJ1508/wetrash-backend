@@ -2,12 +2,14 @@ package yjj.wetrash.global.security.oauth;
 
 import jakarta.security.auth.message.AuthException;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.global.exception.CustomException;
 
 import java.util.Map;
 @Builder
+@Slf4j
 public record OAuth2UserDTO(
         String email, //record 로 private 선언됨
         String profile,
@@ -32,12 +34,11 @@ public record OAuth2UserDTO(
                 .build();
     }
     private static OAuth2UserDTO ofNaver(Map<String, Object> attributes, String userNameAttributeName){
-        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-
+        Map<String, Object> response = (Map<String, Object>) attributes.get(userNameAttributeName);
         return OAuth2UserDTO.builder()
                 .email(response.get("email").toString())
                 .profile(response.get("profile_image").toString())
-                .nickname(response.get(userNameAttributeName).toString())
+                .nickname(response.get("id").toString())
                 .provider("naver")
                 .build();
     }

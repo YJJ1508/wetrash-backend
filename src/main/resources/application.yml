@@ -29,7 +29,6 @@ spring:
             scope:
               - email
               - profile
-              - openid
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
@@ -39,16 +38,15 @@ spring:
             scope:
               - email
               - profile
-
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: "http:localhost:8080/login/oauth2/code/kakao"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
             scope:
-              - email
-              - profile
+              - account_email
+              - profile_image
         provider:
           naver:
             authorization_uri: https://nid.naver.com/oauth2.0/authorize
@@ -77,4 +75,8 @@ jwt:
   expiration: 86400000 # 24시간
 logging:
   level:
+    root: INFO # 프로젝트 전체는 info로 두고
     org.springframework.security: DEBUG
+    org.springframework.security.oauth2.client: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
+    yjj.wetrash.global.security.oauth: DEBUG
