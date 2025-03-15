@@ -59,7 +59,7 @@ public class MemberService {
         //사용자 이메일,비번 담는 Authentication 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginReqDTO.getEmail(), loginReqDTO.getPassword());
-        //사용자 pw 검증 -> Authentication 객체 반환. (authenticate() -> CustomUserDetailsService 메서드 호출)
+        //사용자 pw 검증 -> Authentication 객체 반환. (매니저가 authenticate() -> CustomUserDetailsService 메서드 호출)
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         //인증 정보를 기반으로 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(authentication);

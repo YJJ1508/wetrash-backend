@@ -46,16 +46,19 @@ public class JwtTokenProvider {
     //access token 생성
     public String createAccessToken(Authentication authentication){
         //권한 가져오기
-        String authority = authentication.getAuthorities().stream()
-                .findFirst()
-                .map(GrantedAuthority::getAuthority)
-                .orElse("ROLE_USER");
+//        String authority = authentication.getAuthorities().stream()
+//                .findFirst()
+//                .map(GrantedAuthority::getAuthority)
+//                .orElse("ROLE_USER");
+        CustomDetails principal = (CustomDetails) authentication.getPrincipal();
+        String role = principal.getRole().name();
+
         Date now = new Date();
         Date expiredDate = new Date(now.getTime()+ACCESS_TOKEN_EXPIRE_TIME);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authority)
+                .claim(AUTHORITIES_KEY, role)
                 .setIssuedAt(now)
                 .setExpiration(expiredDate)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -63,15 +66,8 @@ public class JwtTokenProvider {
     }
     //refresh token 생성
     public String createRefreshToken(Authentication authentication){
-        //권한 가져오기
-        String authority = authentication.getAuthorities().stream()
-                .findFirst()
-                .map(GrantedAuthority::getAuthority)
-                .orElse("ROLE_USER");
         Date now = new Date();
         Date expiredDate = new Date(now.getTime()+REFRESH_TOKEN_EXPIRE_TIME);
-
-        // tokenService.saveOrUpdate(authentication.getName(), refreshToken, accessToken); //redis 저장
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
@@ -98,10 +94,9 @@ public class JwtTokenProvider {
         String authority = claims.get(AUTHORITIES_KEY).toString(); //단일 권한
         Collection<? extends GrantedAuthority> authorities =
                 Collections.singletonList(new SimpleGrantedAuthority(authority));
-
-        String email = (String) claims.get("email");
-        String roleStr = (String) claims.get("role");
-        Role role = Role.valueOf(roleStr);
+        String email = (String) claims.getSubject();
+        String roleStr = (String) claims.get("auth", String.class);
+        Role role = Role.valueOf(roleStr); //Role.USER (USER)
         Member member = Member.builder().email(email).role(role).build();
         CustomDetails principal = new CustomDetails(member);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);

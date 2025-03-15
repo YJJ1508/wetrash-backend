@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,9 +50,12 @@ public class CustomDetails implements UserDetails, OAuth2User{
         authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getRole().name()));
         return authorities;
     }
+    public Role getRole(){
+        return member.getRole();
+    }
     @Override
     public String getPassword() {
-        return null;
+        return member.getPassword();
     }
 
     @Override

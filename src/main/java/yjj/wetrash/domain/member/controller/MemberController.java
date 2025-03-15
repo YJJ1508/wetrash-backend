@@ -16,6 +16,7 @@ import yjj.wetrash.domain.member.dto.LoginReqDTO;
 import yjj.wetrash.domain.member.dto.SignUpReqDTO;
 import yjj.wetrash.domain.member.dto.UserInfoResDTO;
 import yjj.wetrash.domain.member.service.MemberService;
+import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenReqDTO;
 import yjj.wetrash.global.security.util.CookieUtil;
@@ -38,7 +39,9 @@ public class MemberController {
 
     @PostMapping("/signIn")
     public ResponseEntity<JwtTokenDTO> signIn(@RequestBody @Valid LoginReqDTO loginReqDTO){
+        log.info("signin controller");
         JwtTokenDTO token = memberService.signIn(loginReqDTO);
+        log.info("service 통과");
         ResponseCookie createCookie = cookieUtil.createCookie(token.getRefreshToken());
         token.setRefreshToken("");
         return ResponseEntity.ok()
@@ -48,9 +51,9 @@ public class MemberController {
 
     @PostMapping("/reissue")
     public ResponseEntity<JwtTokenDTO> reissue(@CookieValue(value = "refreshToken") String refreshToken){
-        log.info("refresh: {}", refreshToken);
+        log.info("수령받은 refresh: {}", refreshToken);
         JwtTokenDTO token = memberService.reissue(refreshToken);
-        if (token.getType()=="both"){
+        if ("both".equals(token.getType())){
             ResponseCookie createCookie = cookieUtil.createCookie(token.getRefreshToken());
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, createCookie.toString())
@@ -60,8 +63,8 @@ public class MemberController {
     }
 
     @GetMapping("/userInfo")
-    public ResponseEntity<UserInfoResDTO> userInfo(@AuthenticationPrincipal UserDetails userDetails){
-        String email = userDetails.getUsername();
+    public ResponseEntity<UserInfoResDTO> userInfo(@AuthenticationPrincipal CustomDetails customDetails){
+        String email = customDetails.getUsername();
         UserInfoResDTO userInfo = memberService.userInfo(email);
         return ResponseEntity.ok(userInfo);
     }
