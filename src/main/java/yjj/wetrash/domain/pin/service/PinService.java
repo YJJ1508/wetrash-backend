@@ -8,6 +8,7 @@ import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.pin.dto.PinRequestDTO;
+import yjj.wetrash.domain.pin.dto.PinResponseDTO;
 import yjj.wetrash.domain.pin.entity.Pin;
 import yjj.wetrash.domain.pin.entity.PinStatus;
 import yjj.wetrash.domain.pin.exception.PinErrorCode;
@@ -16,6 +17,7 @@ import yjj.wetrash.global.exception.CustomException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +62,12 @@ public class PinService {
         return false;
     }
 
+    @Transactional
+    public List<PinResponseDTO> getPendingPins(){
+        return pinRepository.findAllByStatus(PinStatus.PENDING).stream()
+                .map(PinResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 
 
 }
