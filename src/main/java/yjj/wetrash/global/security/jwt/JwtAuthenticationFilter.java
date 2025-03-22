@@ -10,6 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberStatus;
+import yjj.wetrash.domain.member.exception.MemberErrorCode;
+import yjj.wetrash.domain.member.exception.MemberException;
+import yjj.wetrash.global.exception.CustomException;
+import yjj.wetrash.global.security.CustomDetails;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,8 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = resolveToken(request);
         //유효성 검증
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
-            //검증된 회원 정보는 Authentication 객체로 SecurityContext 에 저장
             Authentication authentication = tokenProvider.getAuthentication(jwt);
+            //정지 회원 여부 확인
+            checkSuspended(authentication);
+            //검증된 회원 정보는 Authentication 객체로 SecurityContext 에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response); //controller 로 요청 전달
@@ -44,4 +52,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+    //회원 상태 확인: 정지 회원 제한
+    private void checkSuspended(Authentication authentication){
+        CustomDetails customDetails = (CustomDetails) authentication.getPrincipal();
+        MemberStatus memberStatus = customDetails.getMemberStatus();
+        if (memberStatus == MemberStatus.BANNED){
+            throw new CustomException(MemberErrorCode.BANNED_USER);
+        }
+    }
+
 }
