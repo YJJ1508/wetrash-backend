@@ -57,5 +57,8 @@ public class Pin {
         this.description = description;
         this.status = PinStatus.APPROVED;
     }
+    public void updateOnReject(){
+        this.status = PinStatus.REJECTED;
+    }
 
 }

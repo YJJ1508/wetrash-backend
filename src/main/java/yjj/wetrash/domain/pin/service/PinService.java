@@ -9,6 +9,7 @@ import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.pin.dto.PinApprovalReqDTO;
+import yjj.wetrash.domain.pin.dto.PinRejectRequestDTO;
 import yjj.wetrash.domain.pin.dto.PinRequestDTO;
 import yjj.wetrash.domain.pin.dto.PinResponseDTO;
 import yjj.wetrash.domain.pin.entity.Pin;
@@ -76,13 +77,42 @@ public class PinService {
     public void approvePin(List<PinApprovalReqDTO> dtos){
         // pin 객체 찾기
         for (PinApprovalReqDTO  dto: dtos) {
-            log.info("pin id: {}", dto.getId());
             Pin pin = pinRepository.findPinById(dto.getId())
                     .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
             // title, description, status 수정
             pin.updateOnApprove(dto.getTitle(), dto.getDescription());
         }
-
     }
+    @Transactional
+    public void rejectPin(List<PinRejectRequestDTO> dtos) {
+        for (PinRejectRequestDTO dto: dtos){
+            Pin pin = pinRepository.findPinById(dto.getId())
+                    .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
+            pin.updateOnReject();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
