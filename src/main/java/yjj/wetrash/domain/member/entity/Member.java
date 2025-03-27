@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
@@ -56,13 +57,14 @@ public class Member {
 
 
     @Builder
-    public Member(String email, String password, String nickname, Role role, String profile, String provider){
+    public Member(String email, String password, String nickname, Role role, String profile, String provider, MemberStatus memberStatus){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.profile = profile;
         this.role = role;
         this.provider = provider;
+        this.memberStatus = memberStatus;
     }
 
 }

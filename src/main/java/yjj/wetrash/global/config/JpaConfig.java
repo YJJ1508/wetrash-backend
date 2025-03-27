@@ -5,7 +5,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "yjj.wetrash.domain.member.repository")
-@EntityScan(basePackages = "yjj.wetrash.domain.member.entity")
+@EnableJpaRepositories(
+        basePackages = {
+            "yjj.wetrash.domain.member.repository",
+            "yjj.wetrash.domain.pin.repository",
+        }
+)
+@EntityScan(
+        basePackages = {
+            "yjj.wetrash.domain.member.entity",
+            "yjj.wetrash.domain.pin.entity",
+        }
+)
 public class JpaConfig {
 }

@@ -8,7 +8,15 @@ import yjj.wetrash.global.exception.ErrorCode;
 @RequiredArgsConstructor
 public enum PinErrorCode implements ErrorCode {
 
-    PIN_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 핀입니다.");
+    //409
+    PIN_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 핀입니다."),
+
+    PIN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 핀입니다."),
+
+
+
+    ;
+
 
     private final HttpStatus status;
     private final String message;

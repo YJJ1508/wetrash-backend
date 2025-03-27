@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.member.dto.LoginReqDTO;
 import yjj.wetrash.domain.member.dto.SignUpReqDTO;
 import yjj.wetrash.domain.member.dto.UserInfoResDTO;
+import yjj.wetrash.domain.member.dto.UserListDTO;
+import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.global.security.jwt.CustomUserDetailsService;
 import yjj.wetrash.global.security.jwt.entity.RefreshToken;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
@@ -24,6 +26,9 @@ import yjj.wetrash.global.security.jwt.JwtTokenProvider;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenReqDTO;
 import yjj.wetrash.global.security.util.CookieUtil;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.awt.SystemColor.info;
 
@@ -116,6 +121,20 @@ public class MemberService {
         return memberRepository.findByEmail(email)
                 .map(UserInfoResDTO::of)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+    }
+
+    @Transactional
+    public List<UserListDTO> getAllUsers(){
+        return memberRepository.findAllByRole(Role.USER).stream()
+                .map(UserListDTO::fromEntity)
+                .collect(Collectors.toList());
+
+    }
+    @Transactional
+    public List<UserListDTO> getAllAdmins(){
+        return memberRepository.findAllByRole(Role.ADMIN).stream()
+                .map(UserListDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
 

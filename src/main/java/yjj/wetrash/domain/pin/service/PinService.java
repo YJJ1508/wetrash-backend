@@ -2,11 +2,13 @@ package yjj.wetrash.domain.pin.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
+import yjj.wetrash.domain.pin.dto.PinApprovalReqDTO;
 import yjj.wetrash.domain.pin.dto.PinRequestDTO;
 import yjj.wetrash.domain.pin.dto.PinResponseDTO;
 import yjj.wetrash.domain.pin.entity.Pin;
@@ -16,11 +18,11 @@ import yjj.wetrash.domain.pin.repository.PinRepository;
 import yjj.wetrash.global.exception.CustomException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PinService {
 
     private final MemberRepository memberRepository;
@@ -69,5 +71,18 @@ public class PinService {
                 .collect(Collectors.toList());
     }
 
+    //관리자 승인 요청 핀 -> update
+    @Transactional
+    public void approvePin(List<PinApprovalReqDTO> dtos){
+        // pin 객체 찾기
+        for (PinApprovalReqDTO  dto: dtos) {
+            log.info("pin id: {}", dto.getId());
+            Pin pin = pinRepository.findPinById(dto.getId())
+                    .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
+            // title, description, status 수정
+            pin.updateOnApprove(dto.getTitle(), dto.getDescription());
+        }
+
+    }
 
 }

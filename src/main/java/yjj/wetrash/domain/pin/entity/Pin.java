@@ -16,16 +16,20 @@ import java.time.LocalDateTime;
 public class Pin {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pin_id")
     private Long id;
 
     private double latitude;
     private double longitude;
     private String title;
     private String description;
-    @Column(name = "trashcan_type")
-    private String trashcanType;
+    @Column(name = "trashcan_type1")
+    private String trashcanType1;
+    @Column(name = "trashcan_type2")
+    private String trashcanType2;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member requestMember; //핀 요청 유저
 
     @Enumerated(EnumType.STRING)
@@ -35,17 +39,23 @@ public class Pin {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-
     @Builder
-    public Pin(double lat, double lng, String title, String description, String trashcanType,
+    public Pin(double lat, double lng, String title, String description, String trashcanType1, String trashcanType2,
                Member requestMember, PinStatus status){
         this.latitude = lat;
         this.longitude = lng;
         this.title = title;
         this.description = description;
-        this.trashcanType = trashcanType;
+        this.trashcanType1 = trashcanType1;
+        this.trashcanType2 = trashcanType2;
         this.requestMember = requestMember;
         this.status = status;
+    }
+
+    public void updateOnApprove(String title, String description){ //관리자 승인
+        this.title = title;
+        this.description = description;
+        this.status = PinStatus.APPROVED;
     }
 
 }

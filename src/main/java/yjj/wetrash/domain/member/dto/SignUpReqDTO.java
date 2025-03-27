@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
 
 @Getter
@@ -28,6 +29,9 @@ public class SignUpReqDTO {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private MemberStatus memberStatus;
+
 
     public Member toEntity(String encPassword){
         return Member.builder()
@@ -37,6 +41,7 @@ public class SignUpReqDTO {
                 .provider("null") //자체 회원가입
                 .profile("null") //임시
                 .role(Role.USER)
+                .memberStatus(memberStatus)
                 .build();
     }
 

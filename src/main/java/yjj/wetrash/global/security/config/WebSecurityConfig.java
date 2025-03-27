@@ -52,7 +52,11 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(SWAGGER).permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers(
+                                "/api/user/**",
+                                "api/pin/**"
+                        )
+                        .permitAll()
                         .anyRequest().authenticated());
         http
                 .oauth2Login(oauth2 -> oauth2

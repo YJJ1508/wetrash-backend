@@ -62,11 +62,12 @@ public class MemberController {
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/userInfo")
+    @GetMapping("/me")
     public ResponseEntity<UserInfoResDTO> userInfo(@AuthenticationPrincipal CustomDetails customDetails){
         String email = customDetails.getUsername();
         UserInfoResDTO userInfo = memberService.userInfo(email);
         return ResponseEntity.ok(userInfo);
     }
+
 
 }

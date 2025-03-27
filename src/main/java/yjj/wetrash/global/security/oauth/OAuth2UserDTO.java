@@ -4,6 +4,7 @@ import jakarta.security.auth.message.AuthException;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.global.exception.CustomException;
 
@@ -61,6 +62,7 @@ public record OAuth2UserDTO(
                 .profile(profile)
                 .provider(provider)
                 .role(Role.USER)
+                .memberStatus(MemberStatus.NORMAL)
                 .build();
     }
 }
