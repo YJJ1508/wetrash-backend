@@ -67,4 +67,8 @@ public class Member {
         this.memberStatus = memberStatus;
     }
 
+    public MemberReputation createReputation(){
+        return new MemberReputation(this); //회원 생성 시 평판 생성.
+    }
+
 }

@@ -1,5 +1,7 @@
 package yjj.wetrash.domain.pin.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +10,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class PinApprovalReqDTO {
     private Long id;
+    @JsonProperty("requesterEmail")
+    private String email;
     private String title;
     private String description;
 }

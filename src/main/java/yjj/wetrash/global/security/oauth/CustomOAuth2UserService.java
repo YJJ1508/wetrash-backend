@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.repository.MemberRepository;
+import yjj.wetrash.domain.member.repository.MemberReputationRepository;
 import yjj.wetrash.global.security.CustomDetails;
 
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
+    private final MemberReputationRepository memberReputationRepository;
 
     @Override
     @Transactional
@@ -35,6 +37,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2UserDTO auth2UserDTO = OAuth2UserDTO.of(providerId, oauth2UserAttributes, userNameAttributeName);
         //회원가입 or 로그인
         Member member = getOrSave(auth2UserDTO);
+        //회원 평판 생성 (부가 정보)
+        memberReputationRepository.save(member.createReputation());
         //OAuth2User 객체 반환(security context 저장)
         return new CustomDetails(member, oauth2UserAttributes);
     }

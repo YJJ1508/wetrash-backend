@@ -15,7 +15,10 @@ import yjj.wetrash.domain.member.dto.LoginReqDTO;
 import yjj.wetrash.domain.member.dto.SignUpReqDTO;
 import yjj.wetrash.domain.member.dto.UserInfoResDTO;
 import yjj.wetrash.domain.member.dto.UserListDTO;
+import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberReputation;
 import yjj.wetrash.domain.member.entity.Role;
+import yjj.wetrash.domain.member.repository.MemberReputationRepository;
 import yjj.wetrash.global.security.jwt.CustomUserDetailsService;
 import yjj.wetrash.global.security.jwt.entity.RefreshToken;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
@@ -44,6 +47,7 @@ public class MemberService {
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
+    private final MemberReputationRepository memberReputationRepository;
 
     //회원가입
     @Transactional
@@ -54,8 +58,10 @@ public class MemberService {
         }
         //비번 암호화
         String encP = bCryptPasswordEncoder.encode(signUpDTO.getPassword());
-        //save
-        memberRepository.save(signUpDTO.toEntity(encP));
+        //회원 save
+        Member member = memberRepository.save(signUpDTO.toEntity(encP));
+        //회원 평판 생성 및 저장 (부가 정보)
+        memberReputationRepository.save(member.createReputation());
     }
 
     //로그인 access + refresh 발급
