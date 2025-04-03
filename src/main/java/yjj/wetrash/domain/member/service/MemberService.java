@@ -11,12 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import yjj.wetrash.domain.member.dto.LoginReqDTO;
-import yjj.wetrash.domain.member.dto.SignUpReqDTO;
-import yjj.wetrash.domain.member.dto.UserInfoResDTO;
-import yjj.wetrash.domain.member.dto.UserListDTO;
+import yjj.wetrash.domain.member.dto.*;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.MemberReputation;
+import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
 import yjj.wetrash.global.security.jwt.CustomUserDetailsService;
@@ -141,6 +139,22 @@ public class MemberService {
         return memberRepository.findAllByRole(Role.ADMIN).stream()
                 .map(UserListDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+    @Transactional
+    public void addWarning(MemberWarningReqDTO dto){
+        log.info("email 출력: {}", dto.getEmail());
+        MemberReputation memberReputation = memberReputationRepository.findMemberReputationByMemberEmail(dto.getEmail())
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        //정지 회원일 경우
+        if (memberReputation.getMember().getMemberStatus() == MemberStatus.BANNED){
+            throw new CustomException(MemberErrorCode.BANNED_USER);
+        }
+        //핀 경고 +1
+        memberReputation.addPinWarning();
+        //자동 경고 평가 & 누적 경고 평가
+        memberReputation.evaluateAutoBan();
+        memberReputation.evaluateAutoWarning();
+
     }
 
 

@@ -11,4 +11,7 @@ public interface MemberReputationRepository extends JpaRepository<MemberReputati
 
     Optional<MemberReputation> findMemberReputationByMemberEmail(String email);
 
+    boolean existsMemberReputationByMember(Member member);
+
+
 }

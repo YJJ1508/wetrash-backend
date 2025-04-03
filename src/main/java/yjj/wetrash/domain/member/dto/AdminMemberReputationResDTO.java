@@ -11,7 +11,7 @@ import yjj.wetrash.domain.member.entity.MemberReputation;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminMemberReputationDTO {
+public class AdminMemberReputationResDTO {
 
     private String email;
     private String nickname;
@@ -21,8 +21,8 @@ public class AdminMemberReputationDTO {
     //게시글 관련 신고
     private int boardReportCount;
 
-    public static AdminMemberReputationDTO fromEntity(MemberReputation memberReputation){
-        return AdminMemberReputationDTO.builder()
+    public static AdminMemberReputationResDTO fromEntity(MemberReputation memberReputation){
+        return AdminMemberReputationResDTO.builder()
                 .email(memberReputation.getMember().getEmail())
                 .nickname(memberReputation.getMember().getNickname())
                 .totalPinRequests(memberReputation.getTotalPinRequests())

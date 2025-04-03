@@ -38,7 +38,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         //회원가입 or 로그인
         Member member = getOrSave(auth2UserDTO);
         //회원 평판 생성 (부가 정보)
-        memberReputationRepository.save(member.createReputation());
+        if (!reputationExists(member)){
+            memberReputationRepository.save(member.createReputation());
+        }
         //OAuth2User 객체 반환(security context 저장)
         return new CustomDetails(member, oauth2UserAttributes);
     }
@@ -46,4 +48,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return memberRepository.findByEmail(userDTO.email())    //기존 회원 -> 멤버 반환
                 .orElseGet(() -> memberRepository.save(userDTO.toEntity())); //기존 회원X -> 회원가입
     }
+
+    private boolean reputationExists(Member member){
+        if (memberReputationRepository.existsMemberReputationByMember(member)) return true;
+        else return false;
+    }
+
+
 }

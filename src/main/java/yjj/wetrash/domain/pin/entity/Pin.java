@@ -24,9 +24,9 @@ public class Pin {
     private String title;
     private String description;
     @Column(name = "trashcan_type1")
-    private String trashcanType1;
+    private String trashcanType1;   //일반쓰레기
     @Column(name = "trashcan_type2")
-    private String trashcanType2;
+    private String trashcanType2;   //재활용쓰레기
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

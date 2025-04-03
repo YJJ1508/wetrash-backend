@@ -38,10 +38,10 @@ public class SignUpReqDTO {
                 .email(email)
                 .password(encPassword)
                 .nickname(nickname)
-                .provider("null") //자체 회원가입
+                .provider("wetrash") //자체 회원가입
                 .profile("null") //임시
                 .role(Role.USER)
-                .memberStatus(memberStatus)
+                .memberStatus(MemberStatus.NORMAL)
                 .build();
     }
 

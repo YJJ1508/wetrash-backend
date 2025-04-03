@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import yjj.wetrash.domain.pin.dto.PinListResDTO;
 import yjj.wetrash.domain.pin.dto.PinRequestDTO;
 import yjj.wetrash.domain.pin.dto.PinResponseDTO;
 import yjj.wetrash.domain.pin.service.PinService;
@@ -35,13 +36,15 @@ public class PinController {
         return ResponseEntity.ok().body("핀 저장 완료");
     }
 
-    //관리자페이지 - 보류 상태 요청들 보내기
-    @GetMapping("/admin/pending")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PinResponseDTO>> getPendingPins(){
-        List<PinResponseDTO> pins =  pinService.getPendingPins();
-        return ResponseEntity.ok(pins);
+    @GetMapping("/pins") //api/pin/pins/type="regular"
+    public ResponseEntity<List<PinListResDTO>> getPinsType1(@RequestParam("type") String type){
+        List<PinListResDTO> list = pinService.getPins(type);
+        return ResponseEntity.ok().body(list);
     }
 
+//    @GetMapping("/{pinId}")
+//    public ResponseEntity<> getPinDetail(@PathVariable("pinId") Long pinId){
+//        return
+//    }
 
 }

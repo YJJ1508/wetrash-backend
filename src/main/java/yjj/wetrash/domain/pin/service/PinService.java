@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import yjj.wetrash.domain.member.dto.AdminMemberReputationDTO;
+import yjj.wetrash.domain.member.dto.AdminMemberReputationResDTO;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.MemberReputation;
 import yjj.wetrash.domain.member.entity.MemberStatus;
@@ -12,10 +12,7 @@ import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
-import yjj.wetrash.domain.pin.dto.PinApprovalReqDTO;
-import yjj.wetrash.domain.pin.dto.PinRejectionReqDTO;
-import yjj.wetrash.domain.pin.dto.PinRequestDTO;
-import yjj.wetrash.domain.pin.dto.PinResponseDTO;
+import yjj.wetrash.domain.pin.dto.*;
 import yjj.wetrash.domain.pin.entity.Pin;
 import yjj.wetrash.domain.pin.entity.PinStatus;
 import yjj.wetrash.domain.pin.exception.PinErrorCode;
@@ -92,6 +89,7 @@ public class PinService {
                 return; //관리자 무시
             }
             memberR.approval();
+
         }
     }
     @Transactional
@@ -112,15 +110,30 @@ public class PinService {
     }
 
     @Transactional
-    public List<AdminMemberReputationDTO> getMemberReputations(){
+    public List<AdminMemberReputationResDTO> getMemberReputations(){
         return memberReputationRepository.findAll()
                 .stream()
                 .filter(mr -> mr.getMember().getRole() == Role.USER)
-                .map(AdminMemberReputationDTO::fromEntity)
+                .map(AdminMemberReputationResDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
+    @Transactional //지도 pg에 띄울 핀.
+    public List<PinListResDTO> getPins(String type){
+        String trashType;
+        if ("regular".equals(type)){
+            trashType = "일반쓰레기";
+        } else {
+            trashType = "재활용쓰레기";
+        }
 
+        return pinRepository.findAllByStatus(PinStatus.APPROVED)
+                .stream()
+                .filter(p -> trashType.equals(p.getTrashcanType1())
+                        || trashType.equals(p.getTrashcanType2()))
+                .map(PinListResDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 
 
 

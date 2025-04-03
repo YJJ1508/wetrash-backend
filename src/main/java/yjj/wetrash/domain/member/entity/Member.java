@@ -70,5 +70,11 @@ public class Member {
     public MemberReputation createReputation(){
         return new MemberReputation(this); //회원 생성 시 평판 생성.
     }
+    public void setStatusToWarning(){
+        this.memberStatus = MemberStatus.WARNING;
+    }
+    public void setStatusToBan(){
+        this.memberStatus = MemberStatus.BANNED;
+    }
 
 }
