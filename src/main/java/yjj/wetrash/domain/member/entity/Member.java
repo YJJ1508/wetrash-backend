@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import yjj.wetrash.domain.pin.entity.PinReview;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,7 +30,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Enumerated(EnumType.STRING) //string타입으로 변환하여 db저장한다.
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private String provider; //구글,네이버,카카오,자체 로그인
@@ -45,11 +47,9 @@ public class Member {
 
     //즐겨찾기
 
-    //코멘트
-
-    //요청
-
-    //댓글
+    //후기
+    @OneToMany(mappedBy = "member")
+    private List<PinReview> pinReviews;
 
     //게시글
 

@@ -33,6 +33,10 @@ public class CustomDetails implements UserDetails, OAuth2User{
         this.attributes = attributes;
     }
 
+    public Long getMemberId(){
+        return member.getId();
+    }
+
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;

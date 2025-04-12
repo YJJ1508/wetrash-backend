@@ -9,12 +9,15 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         basePackages = {
             "yjj.wetrash.domain.member.repository",
             "yjj.wetrash.domain.pin.repository",
+
         }
 )
 @EntityScan(
         basePackages = {
             "yjj.wetrash.domain.member.entity",
             "yjj.wetrash.domain.pin.entity",
+        "yjj.wetrash.domain.pinReview.entity",
+
         }
 )
 public class JpaConfig {

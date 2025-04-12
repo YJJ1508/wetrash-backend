@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import yjj.wetrash.domain.member.entity.Member;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,6 +39,9 @@ public class Pin {
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "pin")
+    private List<PinReview> pinReviews;
 
     @Builder
     public Pin(double lat, double lng, String title, String description, String trashcanType1, String trashcanType2,

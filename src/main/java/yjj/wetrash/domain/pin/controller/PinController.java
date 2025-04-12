@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import yjj.wetrash.domain.pin.dto.PinDetailResDTO;
 import yjj.wetrash.domain.pin.dto.PinListResDTO;
 import yjj.wetrash.domain.pin.dto.PinRequestDTO;
 import yjj.wetrash.domain.pin.dto.PinResponseDTO;
@@ -42,9 +43,11 @@ public class PinController {
         return ResponseEntity.ok().body(list);
     }
 
-//    @GetMapping("/{pinId}")
-//    public ResponseEntity<> getPinDetail(@PathVariable("pinId") Long pinId){
-//        return
-//    }
+    @GetMapping("/{pinId}")
+    public ResponseEntity<PinDetailResDTO> getPinDetail(@PathVariable("pinId") Long pinId){
+        PinDetailResDTO pinDetailResDTO = pinService.getDetail(pinId);
+        return ResponseEntity.ok(pinDetailResDTO);
+    }
+
 
 }

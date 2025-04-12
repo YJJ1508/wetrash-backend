@@ -14,9 +14,11 @@ import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
 import yjj.wetrash.domain.pin.dto.*;
 import yjj.wetrash.domain.pin.entity.Pin;
+import yjj.wetrash.domain.pin.entity.PinReview;
 import yjj.wetrash.domain.pin.entity.PinStatus;
 import yjj.wetrash.domain.pin.exception.PinErrorCode;
 import yjj.wetrash.domain.pin.repository.PinRepository;
+import yjj.wetrash.domain.pin.repository.PinReviewRepository;
 import yjj.wetrash.global.exception.CustomException;
 
 import java.util.List;
@@ -30,6 +32,7 @@ public class PinService {
     private final MemberRepository memberRepository;
     private final PinRepository pinRepository;
     private final MemberReputationRepository memberReputationRepository;
+    private final PinReviewRepository pinReviewRepository;
     private static final double DUPLICATE_DISTANCE = 50.0; //50m 기준 반경
 
     @Transactional
@@ -135,7 +138,16 @@ public class PinService {
                 .collect(Collectors.toList());
     }
 
-
+    @Transactional
+    public PinDetailResDTO getDetail(Long pinId){
+        Pin pin = pinRepository.findPinById(pinId)
+                .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
+        List<PinDetailReviewResDTO> reviewDTOs = pinReviewRepository.findAllByPin(pin)
+                .stream()
+                .map(PinDetailReviewResDTO::fromEntity)
+                .toList();
+        return PinDetailResDTO.fromEntity(pin, reviewDTOs);
+    }
 
 
 
