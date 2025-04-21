@@ -4,15 +4,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import yjj.wetrash.domain.pin.dto.PinDetailResDTO;
-import yjj.wetrash.domain.pin.dto.PinListResDTO;
+import yjj.wetrash.domain.pin.dto.PinResDTO;
 import yjj.wetrash.domain.pin.dto.PinRequestDTO;
-import yjj.wetrash.domain.pin.dto.PinResponseDTO;
 import yjj.wetrash.domain.pin.service.PinService;
 import yjj.wetrash.global.security.CustomDetails;
 
@@ -38,15 +35,21 @@ public class PinController {
     }
 
     @GetMapping("/pins") //api/pin/pins/type="regular"
-    public ResponseEntity<List<PinListResDTO>> getPinsType1(@RequestParam("type") String type){
-        List<PinListResDTO> list = pinService.getPins(type);
+    public ResponseEntity<List<PinResDTO>> getPinsType(@RequestParam("type") String type){
+        List<PinResDTO> list = pinService.getPins(type);
         return ResponseEntity.ok().body(list);
     }
 
-    @GetMapping("/{pinId}")
+    @GetMapping("/{pinId}")  //상세페이지
     public ResponseEntity<PinDetailResDTO> getPinDetail(@PathVariable("pinId") Long pinId){
         PinDetailResDTO pinDetailResDTO = pinService.getDetail(pinId);
         return ResponseEntity.ok(pinDetailResDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<PinResDTO> getSharedPin(@RequestParam("sharedPinId") Long pinId){
+        PinResDTO pinResDTO = pinService.getSharedPin(pinId);
+        return ResponseEntity.ok(pinResDTO);
     }
 
 

@@ -14,7 +14,6 @@ import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
 import yjj.wetrash.domain.pin.dto.*;
 import yjj.wetrash.domain.pin.entity.Pin;
-import yjj.wetrash.domain.pin.entity.PinReview;
 import yjj.wetrash.domain.pin.entity.PinStatus;
 import yjj.wetrash.domain.pin.exception.PinErrorCode;
 import yjj.wetrash.domain.pin.repository.PinRepository;
@@ -71,9 +70,9 @@ public class PinService {
     }
 
     @Transactional
-    public List<PinResponseDTO> getPendingPins(){
+    public List<PinAdminResponseDTO> getPendingPins(){
         return pinRepository.findAllByStatus(PinStatus.PENDING).stream()
-                .map(PinResponseDTO::fromEntity)
+                .map(PinAdminResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -122,19 +121,18 @@ public class PinService {
     }
 
     @Transactional //지도 pg에 띄울 핀.
-    public List<PinListResDTO> getPins(String type){
+    public List<PinResDTO> getPins(String type){
         String trashType;
         if ("regular".equals(type)){
             trashType = "일반쓰레기";
         } else {
             trashType = "재활용쓰레기";
         }
-
         return pinRepository.findAllByStatus(PinStatus.APPROVED)
                 .stream()
                 .filter(p -> trashType.equals(p.getTrashcanType1())
                         || trashType.equals(p.getTrashcanType2()))
-                .map(PinListResDTO::fromEntity)
+                .map(PinResDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -149,7 +147,12 @@ public class PinService {
         return PinDetailResDTO.fromEntity(pin, reviewDTOs);
     }
 
-
+    @Transactional
+    public PinResDTO getSharedPin(Long pinId){
+        Pin pin = pinRepository.findPinById(pinId)
+                .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
+        return PinResDTO.fromEntity(pin);
+    }
 
 
 
