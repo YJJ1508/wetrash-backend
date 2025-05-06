@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import yjj.wetrash.domain.member.dto.AdminMemberReputationResDTO;
 import yjj.wetrash.domain.pin.dto.PinApprovalReqDTO;
 import yjj.wetrash.domain.pin.dto.PinRejectionReqDTO;
-import yjj.wetrash.domain.pin.dto.PinAdminResponseDTO;
+import yjj.wetrash.domain.pin.dto.PinAdminResDTO;
 import yjj.wetrash.domain.pin.service.PinService;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class PinAdminController {
 
     //관리자페이지 - 보류 상태 요청들 보내기
     @GetMapping("/pending")
-    public ResponseEntity<List<PinAdminResponseDTO>> getPendingPins(){
-        List<PinAdminResponseDTO> pins =  pinService.getPendingPins();
+    public ResponseEntity<List<PinAdminResDTO>> getPendingPins(){
+        List<PinAdminResDTO> pins =  pinService.getPendingPins();
         return ResponseEntity.ok(pins);
     }
 

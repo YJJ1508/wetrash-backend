@@ -4,12 +4,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import yjj.wetrash.domain.pin.dto.PinDetailResDTO;
 import yjj.wetrash.domain.pin.dto.PinResDTO;
 import yjj.wetrash.domain.pin.dto.PinRequestDTO;
+import yjj.wetrash.domain.pin.dto.PinSearchResDTO;
 import yjj.wetrash.domain.pin.service.PinService;
 import yjj.wetrash.global.security.CustomDetails;
 
@@ -29,7 +32,6 @@ public class PinController {
     public ResponseEntity<?> savePin(@AuthenticationPrincipal CustomDetails customDetails,
                                      @RequestBody @Valid PinRequestDTO pinRequestDTO){
         String email = customDetails.getName();
-        log.info("pin 컨트롤러 pinRequestDTO: {}", pinRequestDTO.getLatitude());
         pinService.savePin(email, pinRequestDTO);   //pending
         return ResponseEntity.ok().body("핀 저장 완료");
     }
@@ -46,10 +48,26 @@ public class PinController {
         return ResponseEntity.ok(pinDetailResDTO);
     }
 
-    @GetMapping
+    @GetMapping //공유 링크로 핀 id검색시 말풍선 띄우기 위함
     public ResponseEntity<PinResDTO> getSharedPin(@RequestParam("sharedPinId") Long pinId){
         PinResDTO pinResDTO = pinService.getSharedPin(pinId);
         return ResponseEntity.ok(pinResDTO);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<PinSearchResDTO>> getSearchPins(@RequestParam("keyword") String keyword,
+                                                               @RequestParam(value = "userLat", required = false) Double userLat,
+                                                               @RequestParam(value = "userLng", required = false) Double userLng,
+                                                               @RequestParam(value = "sortType", required = false) String sortType,
+                                                               @RequestParam(value = "trashType", required = false) String trashType,
+                                                               Pageable pageable
+                                           ){
+        keyword = keyword.trim();
+        log.info("sortTYpe: {}", sortType);
+        log.info("trashType: {}", trashType);
+        Page<PinSearchResDTO> searchResDTOS = pinService.getSearchPins(keyword, userLat, userLng,
+                sortType, trashType, pageable);
+        return ResponseEntity.ok(searchResDTOS);
     }
 
 

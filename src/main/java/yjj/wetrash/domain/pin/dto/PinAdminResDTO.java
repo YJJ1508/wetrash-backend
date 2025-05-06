@@ -10,7 +10,7 @@ import yjj.wetrash.domain.pin.entity.Pin;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PinAdminResponseDTO {  //관리자 페이지로 전송
+public class PinAdminResDTO {  //관리자 페이지로 전송
 
     private Long id;
     private double latitude;
@@ -22,8 +22,8 @@ public class PinAdminResponseDTO {  //관리자 페이지로 전송
     private String trashType1;  //일반 쓰레기
     private String trashType2;
 
-    public static PinAdminResponseDTO fromEntity(Pin pin){
-        return PinAdminResponseDTO.builder()
+    public static PinAdminResDTO fromEntity(Pin pin){
+        return PinAdminResDTO.builder()
                 .id(pin.getId())
                 .latitude(pin.getLatitude())
                 .longitude(pin.getLongitude())

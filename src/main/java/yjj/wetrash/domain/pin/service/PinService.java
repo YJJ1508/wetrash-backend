@@ -3,7 +3,10 @@ package yjj.wetrash.domain.pin.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import yjj.wetrash.domain.member.dto.AdminMemberReputationResDTO;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.MemberReputation;
@@ -70,9 +73,9 @@ public class PinService {
     }
 
     @Transactional
-    public List<PinAdminResponseDTO> getPendingPins(){
+    public List<PinAdminResDTO> getPendingPins(){
         return pinRepository.findAllByStatus(PinStatus.PENDING).stream()
-                .map(PinAdminResponseDTO::fromEntity)
+                .map(PinAdminResDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -154,6 +157,10 @@ public class PinService {
         return PinResDTO.fromEntity(pin);
     }
 
-
+    @Transactional
+    public Page<PinSearchResDTO> getSearchPins(String keyword, Double userLat, Double userLng,
+                                String sortType, String trashType, Pageable pageable){
+        return pinRepository.searchPins(keyword, userLat, userLng, sortType, trashType, pageable);
+    }
 
 }
