@@ -54,7 +54,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(
                                 "/api/user/**",
-                                "api/pin/**"
+                                "/api/pin/**",
+                                "/api/chat/**", "/ws/**"
                         )
                         .permitAll()
                         .anyRequest().authenticated());

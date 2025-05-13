@@ -72,17 +72,16 @@ public class PinCustomRepositoryImpl implements PinCustomRepository{
                         (sortOrder == null ? titlePriorityCase.desc() : sortOrder)
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()+1)
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
-                .select(pin.id.countDistinct())
+                .select(pin.countDistinct())
                 .from(pin)
                 .leftJoin(pinFavorite).on(pinFavorite.pin.eq(pin))
                 .leftJoin(pin.pinReviews, pinReview)
                 .where(searchTitle(keyword)
-                        .or(searchDescription(keyword)))
-                .groupBy(pin.id);
+                        .or(searchDescription(keyword)));
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 

@@ -65,6 +65,7 @@ public class PinController {
         keyword = keyword.trim();
         log.info("sortTYpe: {}", sortType);
         log.info("trashType: {}", trashType);
+        log.info("pageable: {}", pageable);
         Page<PinSearchResDTO> searchResDTOS = pinService.getSearchPins(keyword, userLat, userLng,
                 sortType, trashType, pageable);
         return ResponseEntity.ok(searchResDTOS);
