@@ -7,16 +7,17 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories(
         basePackages = {
-            "yjj.wetrash.domain.member.repository",
-            "yjj.wetrash.domain.pin.repository",
-
+                "yjj.wetrash.domain.member.repository",
+                "yjj.wetrash.domain.pin.repository",
+                "yjj.wetrash.domain.chat.repository",
         }
 )
 @EntityScan(
         basePackages = {
-            "yjj.wetrash.domain.member.entity",
-            "yjj.wetrash.domain.pin.entity",
-        "yjj.wetrash.domain.pinReview.entity",
+                "yjj.wetrash.domain.member.entity",
+                "yjj.wetrash.domain.pin.entity",
+                "yjj.wetrash.domain.pinReview.entity",
+                "yjj.wetrash.domain.chat.entity",
 
         }
 )

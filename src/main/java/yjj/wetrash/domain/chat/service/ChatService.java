@@ -7,9 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.chat.dto.ChatMessageDTO;
+import yjj.wetrash.domain.chat.entity.ChatMessage;
 import yjj.wetrash.domain.chat.entity.MessageType;
+import yjj.wetrash.domain.chat.repository.ChatMessageRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -27,6 +30,7 @@ public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
+    private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
     public void processMessage(ChatMessageDTO messageDTO){
@@ -37,9 +41,6 @@ public class ChatService {
             messageDTO.setMessage(messageDTO.getSender() + "님이 입장하셨습니다.");
         }
         //2.redis 저장 - 30분
-        if (messageDTO.getType() == MessageType.TALK){
-            log.info("talk 타입 출력중: '{}'", messageDTO.getMessage());
-        }
         try{
             String key = "chat:pin:"+messageDTO.getPinId();
             String json = objectMapper.writeValueAsString(messageDTO);
@@ -48,9 +49,17 @@ public class ChatService {
         } catch (JsonProcessingException e){
             log.error("채팅 메세지 json 변환 실패", e);
         }
-        //3.핀 채팅방에 broadcast
+        //3.신고용 위한 저장 - 일주일~한 달
+        if (messageDTO.getType() == MessageType.TALK){
+            saveChatMessage(messageDTO);
+        }
+        //4.핀 채팅방에 broadcast
         String destination = "/sub/pin/" + messageDTO.getPinId();
         messagingTemplate.convertAndSend(destination, messageDTO);
+    }
+    private void saveChatMessage(ChatMessageDTO messageDTO){
+        ChatMessage chatMessage = messageDTO.toEntity(messageDTO);
+        chatMessageRepository.save(chatMessage);
     }
 
     @Transactional
@@ -70,6 +79,14 @@ public class ChatService {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    // db 저장 기한 정하기
+    @Scheduled(cron = "0 0 0 * * *") //매일 자정 실행
+    @Transactional
+    public void deleteOldChatMessages(){
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        chatMessageRepository.deleteOlderThan(oneWeekAgo);
     }
 
 }
