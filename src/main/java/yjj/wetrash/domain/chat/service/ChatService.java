@@ -13,6 +13,10 @@ import yjj.wetrash.domain.chat.dto.ChatMessageDTO;
 import yjj.wetrash.domain.chat.entity.ChatMessage;
 import yjj.wetrash.domain.chat.entity.MessageType;
 import yjj.wetrash.domain.chat.repository.ChatMessageRepository;
+import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.exception.MemberErrorCode;
+import yjj.wetrash.domain.member.repository.MemberRepository;
+import yjj.wetrash.global.exception.CustomException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,16 +35,22 @@ public class ChatService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
     private final ChatMessageRepository chatMessageRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
-    public void processMessage(ChatMessageDTO messageDTO){
+    public void processMessage(String email, ChatMessageDTO messageDTO){
         //1.timestamp 설정
         messageDTO.setCreatedAt(LocalDateTime.now());
         //enter 일 경우 입장 메세지 셋
         if (messageDTO.getType() == MessageType.ENTER) {
             messageDTO.setMessage(messageDTO.getSender() + "님이 입장하셨습니다.");
         }
-        //2.redis 저장 - 30분
+        //2.신고 추적 위한 저장 - 일주일~한 달
+        if (messageDTO.getType() == MessageType.TALK){
+            Long chatMessageId = saveChatMessage(email, messageDTO);
+            messageDTO.setId(chatMessageId);
+        }
+        //3.redis 저장 - 30분
         try{
             String key = "chat:pin:"+messageDTO.getPinId();
             String json = objectMapper.writeValueAsString(messageDTO);
@@ -49,17 +59,16 @@ public class ChatService {
         } catch (JsonProcessingException e){
             log.error("채팅 메세지 json 변환 실패", e);
         }
-        //3.신고용 위한 저장 - 일주일~한 달
-        if (messageDTO.getType() == MessageType.TALK){
-            saveChatMessage(messageDTO);
-        }
         //4.핀 채팅방에 broadcast
         String destination = "/sub/pin/" + messageDTO.getPinId();
         messagingTemplate.convertAndSend(destination, messageDTO);
     }
-    private void saveChatMessage(ChatMessageDTO messageDTO){
-        ChatMessage chatMessage = messageDTO.toEntity(messageDTO);
+    private Long saveChatMessage(String email, ChatMessageDTO messageDTO){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        ChatMessage chatMessage = messageDTO.toEntity(messageDTO, member);
         chatMessageRepository.save(chatMessage);
+        return chatMessage.getId();
     }
 
     @Transactional
@@ -87,6 +96,12 @@ public class ChatService {
     public void deleteOldChatMessages(){
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
         chatMessageRepository.deleteOlderThan(oneWeekAgo);
+    }
+
+    //신고 횟수 일정 수준 이상인 회원 댓글 admin 에게 뿌리기
+    @Transactional
+    public List<ChatMessage> getReportedMessagesForAdmin(int count){
+        return chatMessageRepository.findByReportCountGreaterThanEqual(count);
     }
 
 }

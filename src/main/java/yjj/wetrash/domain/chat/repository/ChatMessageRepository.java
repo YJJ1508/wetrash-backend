@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import yjj.wetrash.domain.chat.entity.ChatMessage;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
@@ -18,4 +19,5 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     @Query("DELETE FROM ChatMessage m WHERE m.createdAt < :cutoffTime")
     void deleteOlderThan(@Param("cutoffTime") LocalDateTime cutoffTime);
 
+    List<ChatMessage> findByReportCountGreaterThanEqual(int count);
 }

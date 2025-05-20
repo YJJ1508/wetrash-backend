@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import yjj.wetrash.domain.member.entity.Member;
 
 import java.time.LocalDateTime;
 
@@ -19,15 +20,28 @@ public class ChatMessage {
     private Long id;
 
     private Long pinId;
-    private String sender;
+
+    @ManyToOne
+    private Member sender;
+
     private String message;
+
     private LocalDateTime createdAt;
 
+    private int reportCount;
+
     @Builder
-    public ChatMessage(Long pinId, String sender, String message, LocalDateTime createdAt){
+    public ChatMessage(Long pinId, Member sender, String message, LocalDateTime createdAt, int reportCount){
         this.pinId = pinId;
         this.sender = sender;
         this.message = message;
         this.createdAt = createdAt;
+        this.reportCount = reportCount;
     }
+
+    public void increaseReportCount(){
+        this.reportCount++;
+    }
+
+
 }

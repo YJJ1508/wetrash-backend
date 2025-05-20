@@ -18,7 +18,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
                 "yjj.wetrash.domain.pin.entity",
                 "yjj.wetrash.domain.pinReview.entity",
                 "yjj.wetrash.domain.chat.entity",
-
         }
 )
 public class JpaConfig {
