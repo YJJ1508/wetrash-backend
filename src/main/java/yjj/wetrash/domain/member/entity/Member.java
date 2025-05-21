@@ -48,8 +48,8 @@ public class Member {
     //즐겨찾기
 
     //후기
-    @OneToMany(mappedBy = "member")
-    private List<PinReview> pinReviews;
+//    @OneToMany(mappedBy = "member")
+//    private List<PinReview> pinReviews;
 
     //게시글
 

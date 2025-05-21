@@ -132,7 +132,6 @@ public class MemberService {
         return memberRepository.findAllByRole(Role.USER).stream()
                 .map(UserListDTO::fromEntity)
                 .collect(Collectors.toList());
-
     }
     @Transactional
     public List<UserListDTO> getAllAdmins(){
@@ -149,12 +148,8 @@ public class MemberService {
         if (memberReputation.getMember().getMemberStatus() == MemberStatus.BANNED){
             throw new CustomException(MemberErrorCode.BANNED_USER);
         }
-        //핀 경고 +1
-        memberReputation.addPinWarning();
-        //자동 경고 평가 & 누적 경고 평가
-        memberReputation.evaluateAutoBan();
-        memberReputation.evaluateAutoWarning();
-
+        //핀 경고 +1 (및 상태 체크)
+        memberReputation.addAdminWarning();
     }
 
 

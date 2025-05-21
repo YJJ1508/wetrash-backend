@@ -22,13 +22,13 @@ public class MemberReputation {
     private int totalPinRequests;
     private int approvedPins;
     private int rejectedPins;
-    private int pinWarningCount; //관리자가
 
-    //게시글 관련 신고
-    private int boardReportCount; //사용자가
 
-    //회원 총 경고 횟수 (지도+핀)
-    private int totalWarnCount;                    //정지 회원이 됐을때 모든 warning 기록 초기화???
+    //회원 경고 관리
+    private int warningCount; //admin 수동 경고 ++ (5회 이상 시 경고 처리)
+    private int totalWarnCount;  //warningCount 5회 이상 -> totalWarnCount 1++ (5회 시
+    private static final int WARNING_THRESHOLD = 5;
+    private static final int BAN_THRESHOLD = 3;
 
 
     public MemberReputation(Member member){
@@ -44,19 +44,22 @@ public class MemberReputation {
         totalPinRequests++;
         rejectedPins++;
     }
-    public void addPinWarning(){
-        pinWarningCount++;
+    public void addAdminWarning(){
+        warningCount++;
+        evaluateAutoWarning();
+        evaluateAutoBan();
     }
     public void evaluateAutoWarning(){ //핀 5회 누적 경고 시 ->  회원 상태 경고로 처리.
-        if (pinWarningCount > 5){
+        if (warningCount >= WARNING_THRESHOLD){
             this.member.setStatusToWarning(); //경고
-            this.pinWarningCount = 0; //초기화
+            this.warningCount = 0; //초기화
             this.totalWarnCount++;
         }
     }
-    public void evaluateAutoBan(){ //누적 경고 5회 이상 -> 회원 정지
-        if (totalWarnCount > 5){
+    public void evaluateAutoBan(){ //누적 경고 3회 이상 -> 회원 정지
+        if (totalWarnCount >= BAN_THRESHOLD){
             this.member.setStatusToBan();
+            this.warningCount = 0;
             this.totalWarnCount = 0;
         }
     }

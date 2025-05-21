@@ -12,7 +12,7 @@ import yjj.wetrash.domain.chat.service.ChatReportService;
 import yjj.wetrash.global.security.CustomDetails;
 
 @RestController
-@RequestMapping("/api/chatReport")
+@RequestMapping("/api/chat/chatReport")
 @RequiredArgsConstructor
 public class ChatReportController {
 

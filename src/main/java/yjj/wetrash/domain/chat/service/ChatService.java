@@ -38,7 +38,7 @@ public class ChatService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void processMessage(String email, ChatMessageDTO messageDTO){
+    public void processMessage(ChatMessageDTO messageDTO){
         //1.timestamp 설정
         messageDTO.setCreatedAt(LocalDateTime.now());
         //enter 일 경우 입장 메세지 셋
@@ -47,7 +47,7 @@ public class ChatService {
         }
         //2.신고 추적 위한 저장 - 일주일~한 달
         if (messageDTO.getType() == MessageType.TALK){
-            Long chatMessageId = saveChatMessage(email, messageDTO);
+            Long chatMessageId = saveChatMessage(messageDTO);
             messageDTO.setId(chatMessageId);
         }
         //3.redis 저장 - 30분
@@ -63,8 +63,8 @@ public class ChatService {
         String destination = "/sub/pin/" + messageDTO.getPinId();
         messagingTemplate.convertAndSend(destination, messageDTO);
     }
-    private Long saveChatMessage(String email, ChatMessageDTO messageDTO){
-        Member member = memberRepository.findByEmail(email)
+    private Long saveChatMessage(ChatMessageDTO messageDTO){
+        Member member = memberRepository.findByNickname(messageDTO.getSender())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
         ChatMessage chatMessage = messageDTO.toEntity(messageDTO, member);
         chatMessageRepository.save(chatMessage);

@@ -14,6 +14,7 @@ import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.global.exception.CustomException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

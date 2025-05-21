@@ -20,10 +20,8 @@ public class ChatController {
 
     //클라이언트가 websocket 으로 보낸 메세지 처리 (enter or send)
     @MessageMapping("/send")
-    public void handleMessage(@AuthenticationPrincipal CustomDetails customDetails,
-                              @RequestBody ChatMessageDTO chatMessageDTO){
-        String email = customDetails.getName();
-        chatService.processMessage(email, chatMessageDTO);
+    public void handleMessage(@RequestBody ChatMessageDTO chatMessageDTO){
+        chatService.processMessage(chatMessageDTO);
     }
 
     //최근 30분 메세지 불러오기 (채팅방 입장할 때)
