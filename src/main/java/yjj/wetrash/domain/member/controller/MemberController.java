@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import yjj.wetrash.domain.member.dto.LoginReqDTO;
 import yjj.wetrash.domain.member.dto.SignUpReqDTO;
 import yjj.wetrash.domain.member.dto.UserInfoResDTO;
+import yjj.wetrash.domain.member.dto.mypage.MemberProfileResDTO;
+import yjj.wetrash.domain.member.dto.mypage.NicknameCheckReqDTO;
+import yjj.wetrash.domain.member.service.MemberMyPageService;
 import yjj.wetrash.domain.member.service.MemberService;
 import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
@@ -30,6 +33,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final CookieUtil cookieUtil;
+    private final MemberMyPageService memberMyPageService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpReqDTO signUpDTO){
@@ -62,12 +66,37 @@ public class MemberController {
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me") //상단바 용 (단순 정보)
     public ResponseEntity<UserInfoResDTO> userInfo(@AuthenticationPrincipal CustomDetails customDetails){
         String email = customDetails.getUsername();
         UserInfoResDTO userInfo = memberService.userInfo(email);
         return ResponseEntity.ok(userInfo);
     }
 
+
+    /*
+     MyPage Controllers
+     */
+    @GetMapping("/mypage/profile")
+    public ResponseEntity<MemberProfileResDTO> getMemberProfile(@AuthenticationPrincipal CustomDetails customDetails){
+        String email = customDetails.getName();
+        MemberProfileResDTO myProfileInfo = memberMyPageService.getMyProfileInfo(email);
+        return ResponseEntity.ok(myProfileInfo);
+    }
+
+    @PostMapping("/mypage/nickname")
+    public ResponseEntity<Void> checkNicknameDuplicate(@RequestBody NicknameCheckReqDTO nicknameCheckReqDTO){
+        boolean exists = memberMyPageService.checkNicknameDuplicate(nicknameCheckReqDTO.getNickname());
+        if (exists) return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/mypage/nickname/update")
+    public ResponseEntity<Void> updateNickname(@AuthenticationPrincipal CustomDetails customDetails,
+                                               @RequestBody NicknameCheckReqDTO nicknameCheckReqDTO){
+        String email = customDetails.getName();
+        memberMyPageService.updateNickname(email, nicknameCheckReqDTO.getNickname());
+        return ResponseEntity.ok().build();
+    }
 
 }

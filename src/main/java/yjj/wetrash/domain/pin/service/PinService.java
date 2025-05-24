@@ -73,8 +73,9 @@ public class PinService {
     }
 
     @Transactional
-    public List<PinAdminResDTO> getPendingPins(){
-        return pinRepository.findAllByStatus(PinStatus.PENDING).stream()
+    public List<PinAdminResDTO> getPinsByStatus(String status){
+        PinStatus pinStatus = PinStatus.valueOf(status.toUpperCase());
+        return pinRepository.findAllByStatus(pinStatus).stream()
                 .map(PinAdminResDTO::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -112,6 +113,11 @@ public class PinService {
             }
             memberR.rejection();
         }
+    }
+
+    @Transactional
+    public void deleteApprovedPinsByAdmin(List<Long> pinIds){
+        pinIds.forEach(pinRepository::deleteById);
     }
 
     @Transactional

@@ -77,4 +77,8 @@ public class Member {
         this.memberStatus = MemberStatus.BANNED;
     }
 
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
+
 }

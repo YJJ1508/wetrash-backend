@@ -23,9 +23,9 @@ public class PinAdminController {
     private final PinService pinService;
 
     //관리자페이지 - 보류 상태 요청들 보내기
-    @GetMapping("/pending")
-    public ResponseEntity<List<PinAdminResDTO>> getPendingPins(){
-        List<PinAdminResDTO> pins =  pinService.getPendingPins();
+    @GetMapping("/pins")
+    public ResponseEntity<List<PinAdminResDTO>> getPinsByStatus(@RequestParam String status){
+        List<PinAdminResDTO> pins =  pinService.getPinsByStatus(status);
         return ResponseEntity.ok(pins);
     }
 
@@ -38,6 +38,12 @@ public class PinAdminController {
     @PatchMapping("/reject")
     public ResponseEntity<Void> rejectPin(@RequestBody List<PinRejectionReqDTO> dtos){
         pinService.updateRejectionPins(dtos);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteSelectedPin(@RequestBody List<Long> pinIds){
+        pinService.deleteApprovedPinsByAdmin(pinIds);
         return ResponseEntity.ok().build();
     }
 
