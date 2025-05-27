@@ -11,12 +11,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 import yjj.wetrash.domain.member.dto.*;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.MemberReputation;
 import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
+import yjj.wetrash.domain.member.util.ProfileImgUploader;
 import yjj.wetrash.global.security.jwt.CustomUserDetailsService;
 import yjj.wetrash.global.security.jwt.entity.RefreshToken;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
@@ -46,20 +49,30 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
     private final MemberReputationRepository memberReputationRepository;
+    private final ProfileImgUploader profileImgUploader;
+
+    private static final String DEFAULT_PROFILE = "http://localhost:8080/uploads/default_profile.png";
 
     //회원가입
     @Transactional
-    public void signUp(SignUpReqDTO signUpDTO){
+    public void signUp(SignUpReqDTO signUpDTO, MultipartFile profile){
         //회원 중복 검사
         if (memberRepository.existsByEmail(signUpDTO.getEmail())){
             throw new CustomException(MemberErrorCode.USER_ALREADY_EXISTS);
         }
         //비번 암호화
         String encP = bCryptPasswordEncoder.encode(signUpDTO.getPassword());
-        //회원 save
-        Member member = memberRepository.save(signUpDTO.toEntity(encP));
-        //회원 평판 생성 및 저장 (부가 정보)
-        memberReputationRepository.save(member.createReputation());
+        //프로필 파일 저장 처리
+        String profileUrl;
+        log.info("profile: {}", profile);
+        if (profile != null && !profile.isEmpty()){
+            profileUrl = profileImgUploader.saveFile(profile);
+        } else {
+            profileUrl = DEFAULT_PROFILE;
+        }
+        //회원 저장
+        Member member = memberRepository.save(signUpDTO.toEntity(encP, profileUrl));
+        memberReputationRepository.save(member.createReputation()); //회원 평판 생성 및 저장 (부가 정보)
     }
 
     //로그인 access + refresh 발급
@@ -151,6 +164,7 @@ public class MemberService {
         //핀 경고 +1 (및 상태 체크)
         memberReputation.addAdminWarning();
     }
+
 
 
 }

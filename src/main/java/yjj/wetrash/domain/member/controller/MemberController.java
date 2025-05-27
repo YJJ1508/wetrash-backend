@@ -12,13 +12,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import yjj.wetrash.domain.member.dto.LoginReqDTO;
+import yjj.wetrash.domain.member.dto.ProfileUploadResDTO;
 import yjj.wetrash.domain.member.dto.SignUpReqDTO;
 import yjj.wetrash.domain.member.dto.UserInfoResDTO;
 import yjj.wetrash.domain.member.dto.mypage.MemberProfileResDTO;
 import yjj.wetrash.domain.member.dto.mypage.NicknameCheckReqDTO;
 import yjj.wetrash.domain.member.service.MemberMyPageService;
 import yjj.wetrash.domain.member.service.MemberService;
+import yjj.wetrash.domain.member.util.ProfileImgUploader;
 import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenReqDTO;
@@ -36,10 +39,14 @@ public class MemberController {
     private final MemberMyPageService memberMyPageService;
 
     @PostMapping("/signUp")
-    public ResponseEntity<?> signUp(@RequestBody @Valid SignUpReqDTO signUpDTO){
-        memberService.signUp(signUpDTO);
+    public ResponseEntity<?> signUp(@RequestPart("user-data") @Valid SignUpReqDTO signUpDTO,
+                                    @RequestPart(value = "profile-data", required = false) MultipartFile profile){
+        log.info("profile-data: {}", profile);
+        memberService.signUp(signUpDTO, profile);
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
     }
+
+
 
     @PostMapping("/signIn")
     public ResponseEntity<JwtTokenDTO> signIn(@RequestBody @Valid LoginReqDTO loginReqDTO){
@@ -74,6 +81,7 @@ public class MemberController {
     }
 
 
+
     /*
      MyPage Controllers
      */
@@ -91,11 +99,19 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/mypage/nickname/update")
+    @PatchMapping("/mypage/nickname-update")
     public ResponseEntity<Void> updateNickname(@AuthenticationPrincipal CustomDetails customDetails,
                                                @RequestBody NicknameCheckReqDTO nicknameCheckReqDTO){
         String email = customDetails.getName();
         memberMyPageService.updateNickname(email, nicknameCheckReqDTO.getNickname());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/mypage/profile-update")
+    public ResponseEntity<Void> updateProfile(@AuthenticationPrincipal CustomDetails customDetails,
+                                              @RequestParam(value = "file", required = false) MultipartFile multipartFile){
+        String email = customDetails.getName();
+        memberMyPageService.updateProfile(email, multipartFile);
         return ResponseEntity.ok().build();
     }
 

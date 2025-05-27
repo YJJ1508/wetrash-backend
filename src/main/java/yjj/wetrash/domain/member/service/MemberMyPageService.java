@@ -4,11 +4,13 @@ import jakarta.el.ELManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import yjj.wetrash.domain.member.dto.mypage.MemberProfileResDTO;
 import yjj.wetrash.domain.member.dto.mypage.NicknameCheckReqDTO;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
+import yjj.wetrash.domain.member.util.ProfileImgUploader;
 import yjj.wetrash.global.exception.CustomException;
 
 @Service
@@ -16,6 +18,7 @@ import yjj.wetrash.global.exception.CustomException;
 public class MemberMyPageService {
 
     private final MemberRepository memberRepository;
+    private final ProfileImgUploader profileImgUploader;
 
     //회원 기본 정보 조회
     public MemberProfileResDTO getMyProfileInfo(String email) {
@@ -34,6 +37,15 @@ public class MemberMyPageService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
         member.updateNickname(nickname);
+    }
+
+    //프로필 수정
+    @Transactional
+    public void updateProfile(String email, MultipartFile multipartFile){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        String profile = profileImgUploader.saveFile(multipartFile);
+        member.updateProfile(profile);
     }
 
 }

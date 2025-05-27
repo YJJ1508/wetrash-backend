@@ -81,4 +81,8 @@ public class Member {
         this.nickname = nickname;
     }
 
+    public void updateProfile(String profile){
+        this.profile = profile;
+    }
+
 }

@@ -55,7 +55,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/api/user/**",
                                 "/api/pin/**",
-                                "/api/chat/**", "/ws/**"
+                                "/api/chat/**", "/ws/**",
+                                "/uploads/**"
                         )
                         .permitAll()
                         .anyRequest().authenticated());

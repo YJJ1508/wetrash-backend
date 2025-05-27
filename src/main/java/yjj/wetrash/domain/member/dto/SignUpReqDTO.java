@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
@@ -26,22 +27,15 @@ public class SignUpReqDTO {
     @Size(min = 2, max = 15, message = "닉네임은 2자 이상 15자 이하로 입력해주세요.")
     private String nickname;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    @Enumerated(EnumType.STRING)
-    private MemberStatus memberStatus;
-
-
-    public Member toEntity(String encPassword){
+    public Member toEntity(String encPassword, String profile){
         return Member.builder()
                 .email(email)
                 .password(encPassword)
                 .nickname(nickname)
                 .provider("wetrash") //자체 회원가입
-                .profile("null") //임시
                 .role(Role.USER)
                 .memberStatus(MemberStatus.NORMAL)
+                .profile(profile)
                 .build();
     }
 
