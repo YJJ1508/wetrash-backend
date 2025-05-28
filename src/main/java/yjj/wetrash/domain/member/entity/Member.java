@@ -51,10 +51,6 @@ public class Member {
 //    @OneToMany(mappedBy = "member")
 //    private List<PinReview> pinReviews;
 
-    //게시글
-
-    //좋아요
-
 
     @Builder
     public Member(String email, String password, String nickname, Role role, String profile, String provider, MemberStatus memberStatus){

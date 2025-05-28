@@ -36,7 +36,6 @@ public class MemberController {
 
     private final MemberService memberService;
     private final CookieUtil cookieUtil;
-    private final MemberMyPageService memberMyPageService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestPart("user-data") @Valid SignUpReqDTO signUpDTO,
@@ -82,37 +81,5 @@ public class MemberController {
 
 
 
-    /*
-     MyPage Controllers
-     */
-    @GetMapping("/mypage/profile")
-    public ResponseEntity<MemberProfileResDTO> getMemberProfile(@AuthenticationPrincipal CustomDetails customDetails){
-        String email = customDetails.getName();
-        MemberProfileResDTO myProfileInfo = memberMyPageService.getMyProfileInfo(email);
-        return ResponseEntity.ok(myProfileInfo);
-    }
-
-    @PostMapping("/mypage/nickname")
-    public ResponseEntity<Void> checkNicknameDuplicate(@RequestBody NicknameCheckReqDTO nicknameCheckReqDTO){
-        boolean exists = memberMyPageService.checkNicknameDuplicate(nicknameCheckReqDTO.getNickname());
-        if (exists) return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/mypage/nickname-update")
-    public ResponseEntity<Void> updateNickname(@AuthenticationPrincipal CustomDetails customDetails,
-                                               @RequestBody NicknameCheckReqDTO nicknameCheckReqDTO){
-        String email = customDetails.getName();
-        memberMyPageService.updateNickname(email, nicknameCheckReqDTO.getNickname());
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/mypage/profile-update")
-    public ResponseEntity<Void> updateProfile(@AuthenticationPrincipal CustomDetails customDetails,
-                                              @RequestParam(value = "file", required = false) MultipartFile multipartFile){
-        String email = customDetails.getName();
-        memberMyPageService.updateProfile(email, multipartFile);
-        return ResponseEntity.ok().build();
-    }
 
 }
