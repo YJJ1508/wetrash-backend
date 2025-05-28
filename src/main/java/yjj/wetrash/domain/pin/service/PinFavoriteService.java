@@ -1,5 +1,6 @@
 package yjj.wetrash.domain.pin.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.member.entity.Member;
@@ -24,6 +25,7 @@ public class PinFavoriteService {
     private final PinRepository pinRepository;
     private final PinFavoriteRepository pinFavoriteRepository;
 
+    @Transactional
     public void togglePinFavorite(String email, Long pinId){
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));

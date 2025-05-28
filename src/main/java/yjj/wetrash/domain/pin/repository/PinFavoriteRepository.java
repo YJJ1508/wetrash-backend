@@ -5,6 +5,7 @@ import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.pin.entity.Pin;
 import yjj.wetrash.domain.pin.entity.PinFavorite;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PinFavoriteRepository extends JpaRepository<PinFavorite, Long> {
@@ -12,5 +13,7 @@ public interface PinFavoriteRepository extends JpaRepository<PinFavorite, Long> 
     Optional<PinFavorite> findByMemberAndPin(Member member, Pin pin);
 
     boolean existsPinFavoriteByMemberAndPin(Member member, Pin pin);
+
+    List<PinFavorite> findAllByMember(Member member);
 
 }

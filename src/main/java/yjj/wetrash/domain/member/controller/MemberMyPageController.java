@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import yjj.wetrash.domain.member.dto.mypage.FavoritesResDTO;
 import yjj.wetrash.domain.member.dto.mypage.MemberProfileResDTO;
 import yjj.wetrash.domain.member.dto.mypage.NicknameCheckReqDTO;
 import yjj.wetrash.domain.member.dto.mypage.ReviewsResDTO;
@@ -58,4 +59,10 @@ public class MemberMyPageController {
         return ResponseEntity.ok(reviews);
     }
 
+    @GetMapping("/favorites")
+    public ResponseEntity<List<FavoritesResDTO>> getMemberFavorites(@AuthenticationPrincipal CustomDetails customDetails){
+        String email = customDetails.getName();
+        List<FavoritesResDTO> favorites = memberMyPageService.getMemberFavorites(email);
+        return ResponseEntity.ok(favorites);
+    }
 }

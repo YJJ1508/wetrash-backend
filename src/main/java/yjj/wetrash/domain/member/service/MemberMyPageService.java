@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import yjj.wetrash.domain.member.dto.mypage.FavoritesResDTO;
 import yjj.wetrash.domain.member.dto.mypage.MemberProfileResDTO;
 import yjj.wetrash.domain.member.dto.mypage.NicknameCheckReqDTO;
 import yjj.wetrash.domain.member.dto.mypage.ReviewsResDTO;
@@ -13,6 +14,7 @@ import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.member.util.ProfileImgUploader;
 import yjj.wetrash.domain.pin.entity.PinReview;
+import yjj.wetrash.domain.pin.repository.PinFavoriteRepository;
 import yjj.wetrash.domain.pin.repository.PinReviewRepository;
 import yjj.wetrash.domain.pin.service.PinReviewService;
 import yjj.wetrash.global.exception.CustomException;
@@ -27,6 +29,7 @@ public class MemberMyPageService {
     private final MemberRepository memberRepository;
     private final ProfileImgUploader profileImgUploader;
     private final PinReviewRepository pinReviewRepository;
+    private final PinFavoriteRepository pinFavoriteRepository;
 
     //회원 기본 정보 조회
     public MemberProfileResDTO getMyProfileInfo(String email) {
@@ -66,5 +69,14 @@ public class MemberMyPageService {
                 .collect(Collectors.toList());
     }
 
+    //내 즐겨찾기 조회
+    @Transactional
+    public List<FavoritesResDTO> getMemberFavorites(String email){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        return pinFavoriteRepository.findAllByMember(member).stream()
+                .map(FavoritesResDTO::from)
+                .collect(Collectors.toList());
+    }
 
 }
