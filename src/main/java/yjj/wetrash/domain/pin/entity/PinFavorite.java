@@ -14,6 +14,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "pin_favorite",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"member_member_id", "pin_pin_id"})
+        })
 public class PinFavorite {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

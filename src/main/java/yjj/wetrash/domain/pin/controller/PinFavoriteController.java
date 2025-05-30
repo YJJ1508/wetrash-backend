@@ -14,6 +14,7 @@ public class PinFavoriteController {
 
     private final PinFavoriteService pinFavoriteService;
 
+    //favorite 등록/해제
     @PostMapping("/{pinId}")
     public ResponseEntity<?> togglePinFavorite(@AuthenticationPrincipal CustomDetails customDetails,
                                              @PathVariable("pinId") Long pinId){
@@ -21,6 +22,7 @@ public class PinFavoriteController {
         return ResponseEntity.ok().build();
     }
 
+    //favorite 조회
     @GetMapping("/{pinId}")
     public ResponseEntity<Boolean> checkPinFavorite(@AuthenticationPrincipal CustomDetails customDetails,
                                                        @PathVariable("pinId") Long pinId){
