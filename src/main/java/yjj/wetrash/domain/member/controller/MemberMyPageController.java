@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import yjj.wetrash.domain.member.dto.mypage.FavoritesResDTO;
-import yjj.wetrash.domain.member.dto.mypage.MemberProfileResDTO;
-import yjj.wetrash.domain.member.dto.mypage.NicknameCheckReqDTO;
-import yjj.wetrash.domain.member.dto.mypage.ReviewsResDTO;
+import yjj.wetrash.domain.member.dto.mypage.*;
 import yjj.wetrash.domain.member.service.MemberMyPageService;
 import yjj.wetrash.global.security.CustomDetails;
 
@@ -65,4 +62,20 @@ public class MemberMyPageController {
         List<FavoritesResDTO> favorites = memberMyPageService.getMemberFavorites(email);
         return ResponseEntity.ok(favorites);
     }
+
+    @GetMapping("/tier")
+    public ResponseEntity<PointResDTO> getMemberTier(@AuthenticationPrincipal CustomDetails customDetails){
+        String email = customDetails.getName();
+        PointResDTO tier = memberMyPageService.getMemberPointTier(email);
+        return ResponseEntity.ok(tier);
+    }
+
+    @GetMapping("/tier/detail")
+    public ResponseEntity<List<PointDetailResDTO>> getMemberTierDetail(@AuthenticationPrincipal CustomDetails customDetails){
+        String email = customDetails.getName();
+        List<PointDetailResDTO> tierDetail = memberMyPageService.getMemberPointDetail(email);
+        return ResponseEntity.ok(tierDetail);
+    }
+
+
 }

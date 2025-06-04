@@ -19,6 +19,7 @@ public enum MemberErrorCode implements ErrorCode {
     //NOT_FOUND(404) 존재 하지 않는 값일 때
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "세션이 만료되었습니다. 다시 로그인해주세요."),
+    POINT_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 포인트 기록입니다."),
 
     //UNAUTHORIZED(401) 값이 일치 하지 않는 경우
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),

@@ -45,15 +45,11 @@ public class Member {
     @Column(name = "member_status")
     private MemberStatus memberStatus;
 
-    //즐겨찾기
-
-    //후기
-//    @OneToMany(mappedBy = "member")
-//    private List<PinReview> pinReviews;
-
+    private int totalPoint; //포인트 적립
 
     @Builder
-    public Member(String email, String password, String nickname, Role role, String profile, String provider, MemberStatus memberStatus){
+    public Member(String email, String password, String nickname, Role role, String profile, String provider, MemberStatus memberStatus,
+                  int totalPoint){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -61,6 +57,7 @@ public class Member {
         this.role = role;
         this.provider = provider;
         this.memberStatus = memberStatus;
+        this.totalPoint = totalPoint;
     }
 
     public MemberReputation createReputation(){
@@ -79,6 +76,13 @@ public class Member {
 
     public void updateProfile(String profile){
         this.profile = profile;
+    }
+
+    public void addPoint(int point){
+        this.totalPoint += point;
+    }
+    public void subtractPoint(int point){
+        this.totalPoint -= point;
     }
 
 }

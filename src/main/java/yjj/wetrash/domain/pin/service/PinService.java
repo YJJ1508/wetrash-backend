@@ -6,15 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import yjj.wetrash.domain.member.dto.AdminMemberReputationResDTO;
-import yjj.wetrash.domain.member.entity.Member;
-import yjj.wetrash.domain.member.entity.MemberReputation;
-import yjj.wetrash.domain.member.entity.MemberStatus;
-import yjj.wetrash.domain.member.entity.Role;
+import yjj.wetrash.domain.member.entity.*;
+import yjj.wetrash.domain.member.entity.PointHistory.PointReason;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
+import yjj.wetrash.domain.member.repository.PointHistoryRepository;
 import yjj.wetrash.domain.pin.dto.*;
 import yjj.wetrash.domain.pin.entity.Pin;
 import yjj.wetrash.domain.pin.entity.PinStatus;
@@ -35,6 +33,7 @@ public class PinService {
     private final PinRepository pinRepository;
     private final MemberReputationRepository memberReputationRepository;
     private final PinReviewRepository pinReviewRepository;
+    private final PointHistoryRepository pointHistoryRepository;
     private static final double DUPLICATE_DISTANCE = 50.0; //50m 기준 반경
 
     @Transactional
@@ -95,7 +94,12 @@ public class PinService {
                 return; //관리자 무시
             }
             memberR.approval();
-
+            //3.사용자 포인트 적립
+            Member member = memberRepository.findByEmail(dto.getEmail())
+                    .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+            PointHistory pointHistory = PointHistory.createForPinApproval(member, pin);
+            pointHistoryRepository.save(pointHistory);
+            member.addPoint(pointHistory.getPoint()); //회원 포인트 +
         }
     }
     @Transactional

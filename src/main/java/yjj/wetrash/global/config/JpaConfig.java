@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(
         basePackages = {
                 "yjj.wetrash.domain.member.entity",
+                "yjj.wetrash.domain.pointHistory.entity",
                 "yjj.wetrash.domain.pin.entity",
                 "yjj.wetrash.domain.pinReview.entity",
                 "yjj.wetrash.domain.chat.entity",
