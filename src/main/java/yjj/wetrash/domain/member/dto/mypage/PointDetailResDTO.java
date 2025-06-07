@@ -30,7 +30,7 @@ public class PointDetailResDTO {
     public static PointDetailResDTO from(PointHistory pointHistory){
         return PointDetailResDTO.builder()
                 .pointId(pointHistory.getId())
-                .point(pointHistory.getMember().getTotalPoint())
+                .point(pointHistory.getPoint())
                 .pointReason(pointHistory.getPointReason())
                 .pin_id(pointHistory.getPin().getId())
                 .pin_title(pointHistory.getPin().getTitle())

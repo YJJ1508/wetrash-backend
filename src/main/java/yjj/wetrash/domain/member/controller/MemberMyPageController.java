@@ -70,7 +70,7 @@ public class MemberMyPageController {
         return ResponseEntity.ok(tier);
     }
 
-    @GetMapping("/tier/detail")
+    @GetMapping("/tier-detail")
     public ResponseEntity<List<PointDetailResDTO>> getMemberTierDetail(@AuthenticationPrincipal CustomDetails customDetails){
         String email = customDetails.getName();
         List<PointDetailResDTO> tierDetail = memberMyPageService.getMemberPointDetail(email);

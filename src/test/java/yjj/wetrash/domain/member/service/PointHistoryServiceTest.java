@@ -23,26 +23,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ExtendWith(MockitoExtension.class)
-//@SpringBootTest
-//@Transactional @Rollback
+//@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional @Rollback
 public class PointHistoryServiceTest {
     
-    @Mock
-    private MemberRepository memberRepository;
-    @Mock
-    private PointHistoryRepository pointHistoryRepository;
-
-    @InjectMocks
-    private PointHistoryService pointHistoryService;
+//    @Mock
+//    private MemberRepository memberRepository;
+//    @Mock
+//    private PointHistoryRepository pointHistoryRepository;
+//
+//    @InjectMocks
+//    private PointHistoryService pointHistoryService;
 
     //DateUtil 때문에 springbootTest 로
-//    @Autowired
-//    private PointHistoryService pointHistoryService;
-//    @Autowired
-//    private MemberRepository memberRepository;
-//    @Autowired
-//    private PointHistoryRepository pointHistoryRepository;
+    @Autowired
+    private PointHistoryService pointHistoryService;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private PointHistoryRepository pointHistoryRepository;
 
     @BeforeEach
     void setUpForTop10MembersInLastMonth(){
@@ -53,7 +53,7 @@ public class PointHistoryServiceTest {
             Member member = memberRepository.save(
                     Member.builder()
                             .nickname("oldMember0" + i)
-                            .email("2old" + i + "@test.com")
+                            .email("old" + i + "@test.com")
                             .build()
             );
             PointHistory pointHistory = PointHistory.builder()
@@ -67,8 +67,8 @@ public class PointHistoryServiceTest {
         for (int i = 1; i <= 10; i++){
             Member member = memberRepository.save(
                     Member.builder()
-                            .email("2recent" + i + "@test.com")
-                            .nickname("recentMember0" + i)
+                            .email("recent" + i + "@test.com")
+                            .nickname("recentMember" + i)
                             .build()
             );
             PointHistory pointHistory = PointHistory.builder()

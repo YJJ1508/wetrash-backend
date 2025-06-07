@@ -14,6 +14,7 @@ import yjj.wetrash.domain.member.repository.PointHistoryRepository;
 import yjj.wetrash.global.util.DateUtil;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -52,22 +53,39 @@ public class PointHistoryService {
     public List<PointRankingResDTO> getTop10Members(){
         List<Member> top10 = memberRepository.findMemberTop10ByTotalPoint(PageRequest.of(0,10));
 
-        return IntStream.range(0, top10.size())
-                .mapToObj(i -> PointRankingResDTO.from(top10.get(i), i+1))
-                .collect(Collectors.toList());
+        //동점 처리
+        List<PointRankingResDTO> result = new ArrayList<>();
+        int currentRank = 1;
+        int prevPoint = -1;
+        for (int i = 0; i < top10.size(); i++){
+            Member m = top10.get(i);
+            int point = m.getTotalPoint();
+            if (point != prevPoint) currentRank = i + 1;
+            result.add(PointRankingResDTO.from(m, currentRank));
+            prevPoint = point;
+        }
+        return result;
     }
 
     //point 지난달 top10 조회
     @Transactional
     public List<PointRankingResDTO> getTop10MembersInLastMonth(){
         LocalDateTime[] range = dateUtil.getLastMonthRange();
-        log.info("range[0]: {}, range[1]: {}", range[0], range[1]);
         List<Object[]> top10 = pointHistoryRepository.findTopMembersByPointInLastMonth(range[0], range[1]);
-        log.info("Top10 size = " + top10.size());
-        return IntStream.range(0,10)
-                .mapToObj(i -> PointRankingResDTO. fromRaw(top10.get(i), i+1))
-                .collect(Collectors.toList());
+        //동점 처리
+        List<PointRankingResDTO> result = new ArrayList<>();
+        int currentRank = 1;
+        int prevPoint = -1;
+        for (int i = 0; i < top10.size(); i++){
+            Object[] o = top10.get(i);
+            int point = ((Number) o[2]).intValue();
+            if (point != prevPoint) currentRank = i + 1;
+            result.add(PointRankingResDTO.fromRaw(o, currentRank));
+            prevPoint = point;
+        }
+        return result;
     }
+
 
 
 }

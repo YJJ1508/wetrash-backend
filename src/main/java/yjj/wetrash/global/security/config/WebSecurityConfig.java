@@ -56,7 +56,8 @@ public class WebSecurityConfig {
                                 "/api/user/**",
                                 "/api/pin/**",
                                 "/api/chat/**", "/ws/**",
-                                "/uploads/**"
+                                "/uploads/**",
+                                "/api/points/**"
                         )
                         .permitAll()
                         .anyRequest().authenticated());

@@ -25,7 +25,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     List<Long> findMemberIdTop10ByTotalPoint(Pageable pageable); //pageable 여기선 limit 대신 하기 위함.
 
     //회원 top10 조회
-    @Query("SELECT m FROM Member m ORDER BY m.totalPoint DESC")
+    @Query("SELECT m FROM Member m WHERE m.totalPoint > 0 ORDER BY m.totalPoint DESC")
     List<Member> findMemberTop10ByTotalPoint(Pageable pageable);
 
 }
