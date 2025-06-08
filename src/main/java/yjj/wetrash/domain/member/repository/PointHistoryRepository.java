@@ -28,6 +28,7 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
         JOIN member m ON p.member_id = m.member_id
         WHERE p.created_at BETWEEN :start AND :end
         GROUP BY m.member_id, m.nickname
+        HAVING SUM(p.point) > 0
         ORDER BY total DESC
         LIMIT 10
     """, nativeQuery = true)
