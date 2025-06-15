@@ -1,5 +1,6 @@
 package yjj.wetrash.global.security.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,15 +11,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.MemberStatus;
-import yjj.wetrash.domain.member.exception.MemberErrorCode;
-import yjj.wetrash.domain.member.exception.MemberException;
-import yjj.wetrash.global.exception.CustomException;
+import yjj.wetrash.global.exception.ErrorResponse;
+import yjj.wetrash.global.exception.ErrorResponseWriter;
 import yjj.wetrash.global.security.CustomDetails;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -27,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer";
     private final JwtTokenProvider tokenProvider;
+    private final ErrorResponseWriter errorResponseWriter;
 
     // 1.요청 낚아채기 2. 서블릿(controller)로 요청 넘기기
     @Override
@@ -38,7 +37,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
             Authentication authentication = tokenProvider.getAuthentication(jwt);
             //정지 회원 여부 확인
-            checkSuspended(authentication);
+            if (!"GET".equalsIgnoreCase(request.getMethod()) && //get api만 허용
+                checkSuspended(response, authentication)) {
+                return;
+            }
             //검증된 회원 정보는 Authentication 객체로 SecurityContext 에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -53,12 +55,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
     //회원 상태 확인: 정지 회원 제한
-    private void checkSuspended(Authentication authentication){
+    private boolean checkSuspended(HttpServletResponse response, Authentication authentication) throws IOException{
         CustomDetails customDetails = (CustomDetails) authentication.getPrincipal();
         MemberStatus memberStatus = customDetails.getMemberStatus();
+        log.info("필터에서 회원 상태 출력: {}", memberStatus);
+        //필터라 response 수동으로 만들어서 전송(403 에러코드를 받지 못함)
         if (memberStatus == MemberStatus.BANNED){
-            throw new CustomException(MemberErrorCode.BANNED_USER);
+            errorResponseWriter.write(response, 403,
+                    new ErrorResponse("BANNED_USER", "정지된 회원으로, 일부 기능이 제한됩니다."));
+            return true;
         }
+        return false;
     }
 
 }

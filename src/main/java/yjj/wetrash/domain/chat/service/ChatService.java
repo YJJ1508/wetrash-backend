@@ -14,6 +14,7 @@ import yjj.wetrash.domain.chat.entity.ChatMessage;
 import yjj.wetrash.domain.chat.entity.MessageType;
 import yjj.wetrash.domain.chat.repository.ChatMessageRepository;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.global.exception.CustomException;
@@ -47,6 +48,8 @@ public class ChatService {
         }
         //2.신고 추적 위한 저장 - 일주일~한 달
         if (messageDTO.getType() == MessageType.TALK){
+            //정지 회원일 경우 채팅 막기
+            checkSuspended(messageDTO.getSender());
             Long chatMessageId = saveChatMessage(messageDTO);
             messageDTO.setId(chatMessageId);
         }
@@ -62,6 +65,13 @@ public class ChatService {
         //4.핀 채팅방에 broadcast
         String destination = "/sub/pin/" + messageDTO.getPinId();
         messagingTemplate.convertAndSend(destination, messageDTO);
+    }
+    private void checkSuspended(String nickname){
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        if (member.getMemberStatus() == MemberStatus.BANNED){
+            throw new CustomException(MemberErrorCode.BANNED_USER);
+        }
     }
     private Long saveChatMessage(ChatMessageDTO messageDTO){
         Member member = memberRepository.findByNickname(messageDTO.getSender())

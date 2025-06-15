@@ -1,6 +1,7 @@
 package yjj.wetrash.domain.chat.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor
+@Slf4j
 public class ChatController {
 
     private final ChatService chatService;
@@ -30,4 +32,5 @@ public class ChatController {
         List<ChatMessageDTO> messages = chatService.getRecentMessages(pinId);
         return ResponseEntity.ok(messages);
     }
+
 }

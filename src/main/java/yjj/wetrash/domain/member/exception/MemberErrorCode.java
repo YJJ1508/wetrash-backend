@@ -10,7 +10,7 @@ import yjj.wetrash.global.exception.ErrorCode;
 public enum MemberErrorCode implements ErrorCode {
 
     //FORBIDDEN(403) 정지 회원
-    BANNED_USER(HttpStatus.FORBIDDEN, "영구 정지된 회원입니다."),
+    BANNED_USER(HttpStatus.FORBIDDEN, "정지된 회원으로, 일부 기능이 제한됩니다."),
     WARNING_USER(HttpStatus.FORBIDDEN, "경고 상태인 사용자로, 일부 기능이 제한됩니다."),
 
     //CONFLICT(409) 이미 존재 하는 값일 때

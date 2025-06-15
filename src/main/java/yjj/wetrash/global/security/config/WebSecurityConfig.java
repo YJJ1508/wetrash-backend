@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import yjj.wetrash.global.exception.ErrorResponseWriter;
 import yjj.wetrash.global.security.jwt.JwtAuthenticationFilter;
 import yjj.wetrash.global.security.jwt.JwtTokenProvider;
 import yjj.wetrash.global.security.oauth.CustomOAuth2UserService;
@@ -25,6 +26,7 @@ import java.util.List;
 public class WebSecurityConfig {
 
     private final JwtTokenProvider tokenProvider;
+    private final ErrorResponseWriter errorResponseWriter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private static final String[] SWAGGER = {
@@ -67,7 +69,7 @@ public class WebSecurityConfig {
                         .successHandler(oAuth2SuccessHandler)
                 );
         http
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),
+                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider, errorResponseWriter),
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

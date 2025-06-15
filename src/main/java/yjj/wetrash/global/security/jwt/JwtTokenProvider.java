@@ -15,7 +15,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
+import yjj.wetrash.domain.member.exception.MemberErrorCode;
+import yjj.wetrash.domain.member.repository.MemberRepository;
+import yjj.wetrash.global.exception.CustomException;
 import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
 
@@ -26,19 +30,18 @@ import java.util.Date;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000*60*30; //30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000*60*24*7; //7일1000*60*24*7
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000*60*24*7; //7일 1000*60*24*7
     private static final long THREE_DAYS = 1000 * 60 * 60 * 24 * 3;  // 3일
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
-
     private final Key key; //HMAC 알고리즘 사용 위한 Key 객체
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey){
-        byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey); //Base64로 디코딩
-        this.key = Keys.hmacShaKeyFor(keyBytes);//디코딩 된 키 Key 객체로 변환 (HMAC 키 생성)
-    }
+
+    private final MemberRepository memberRepository;
+
 
     /*
         토큰 생성
@@ -95,9 +98,10 @@ public class JwtTokenProvider {
         Collection<? extends GrantedAuthority> authorities =
                 Collections.singletonList(new SimpleGrantedAuthority(authority));
         String email = (String) claims.getSubject();
-        String roleStr = (String) claims.get("auth", String.class);
-        Role role = Role.valueOf(roleStr); //Role.USER (USER)
-        Member member = Member.builder().email(email).role(role).build();
+//        String roleStr = (String) claims.get("auth", String.class); 회원 db 조회로 변경
+//        Role role = Role.valueOf(roleStr); //Role.USER (USER)
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
         CustomDetails principal = new CustomDetails(member);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
