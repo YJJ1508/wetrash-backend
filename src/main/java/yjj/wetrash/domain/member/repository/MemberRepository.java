@@ -3,7 +3,9 @@ package yjj.wetrash.domain.member.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
 
 import java.time.LocalDateTime;
@@ -28,4 +30,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     @Query("SELECT m FROM Member m WHERE m.totalPoint > 0 ORDER BY m.totalPoint DESC")
     List<Member> findMemberTop10ByTotalPoint(Pageable pageable);
 
+    List<Member> findAllByMemberStatusAndSuspendedAtBefore(MemberStatus status, LocalDateTime dateTime);
 }

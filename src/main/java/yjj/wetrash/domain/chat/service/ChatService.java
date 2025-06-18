@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.chat.dto.ChatMessageDTO;
 import yjj.wetrash.domain.chat.entity.ChatMessage;
@@ -18,10 +19,11 @@ import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.global.exception.CustomException;
+import yjj.wetrash.global.security.CustomDetails;
 
+import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -39,18 +41,20 @@ public class ChatService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void processMessage(ChatMessageDTO messageDTO){
+    public void processMessage(ChatMessageDTO messageDTO, Principal principal){
+        Authentication authentication = (Authentication) principal;
+        CustomDetails member = (CustomDetails) authentication.getPrincipal();
+        log.info("user getPrincipal: {}", member);
         //1.timestamp 설정
         messageDTO.setCreatedAt(LocalDateTime.now());
         //enter 일 경우 입장 메세지 셋
         if (messageDTO.getType() == MessageType.ENTER) {
-            messageDTO.setMessage(messageDTO.getSender() + "님이 입장하셨습니다.");
+            messageDTO.setMessage(member.getNickname() + "님이 입장하셨습니다.");
         }
         //2.신고 추적 위한 저장 - 일주일~한 달
         if (messageDTO.getType() == MessageType.TALK){
-            //정지 회원일 경우 채팅 막기
-            checkSuspended(messageDTO.getSender());
-            Long chatMessageId = saveChatMessage(messageDTO);
+            checkSuspended(member); //정지 회원일 경우 채팅 막기
+            Long chatMessageId = saveChatMessage(messageDTO, member);
             messageDTO.setId(chatMessageId);
         }
         //3.redis 저장 - 30분
@@ -66,17 +70,14 @@ public class ChatService {
         String destination = "/sub/pin/" + messageDTO.getPinId();
         messagingTemplate.convertAndSend(destination, messageDTO);
     }
-    private void checkSuspended(String nickname){
-        Member member = memberRepository.findByNickname(nickname)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
-        if (member.getMemberStatus() == MemberStatus.BANNED){
-            throw new CustomException(MemberErrorCode.BANNED_USER);
+    private void checkSuspended(CustomDetails member){
+        if (member.getMemberStatus() == MemberStatus.SUSPENDED){
+            throw new CustomException(MemberErrorCode.SUSPENDED_USER);
         }
     }
-    private Long saveChatMessage(ChatMessageDTO messageDTO){
-        Member member = memberRepository.findByNickname(messageDTO.getSender())
-                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
-        ChatMessage chatMessage = messageDTO.toEntity(messageDTO, member);
+    private Long saveChatMessage(ChatMessageDTO messageDTO, CustomDetails member){
+        Member getMember = member.getMember();
+        ChatMessage chatMessage = messageDTO.toEntity(messageDTO, getMember);
         chatMessageRepository.save(chatMessage);
         return chatMessage.getId();
     }

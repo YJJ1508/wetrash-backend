@@ -52,7 +52,7 @@ public class MemberReputationTest {
             mr.addAdminWarning();
         }
         //then
-        assertEquals(MemberStatus.BANNED, member.getMemberStatus());
+        assertEquals(MemberStatus.SUSPENDED, member.getMemberStatus());
     }
 
 }

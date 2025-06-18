@@ -7,10 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import yjj.wetrash.domain.pin.entity.PinReview;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -45,6 +43,8 @@ public class Member {
     @Column(name = "member_status")
     private MemberStatus memberStatus;
 
+    private LocalDateTime suspendedAt;
+
     private int totalPoint; //포인트 적립
 
     @Builder
@@ -67,7 +67,12 @@ public class Member {
         this.memberStatus = MemberStatus.WARNING;
     }
     public void setStatusToBan(){
-        this.memberStatus = MemberStatus.BANNED;
+        this.memberStatus = MemberStatus.SUSPENDED;
+        this.suspendedAt = LocalDateTime.now();
+    }
+    public void reactivateStatus(){
+        this.memberStatus = MemberStatus.NORMAL;
+        this.suspendedAt = null;
     }
 
     public void updateNickname(String nickname){
@@ -83,6 +88,15 @@ public class Member {
     }
     public void subtractPoint(int point){
         this.totalPoint -= point;
+    }
+
+
+    //테스트 전용 생성자
+    public static Member createSuspendedMemberForTest(LocalDateTime suspendedAt){
+        Member member = new Member();
+        member.memberStatus = MemberStatus.SUSPENDED;
+        member.suspendedAt = suspendedAt;
+        return member;
     }
 
 }

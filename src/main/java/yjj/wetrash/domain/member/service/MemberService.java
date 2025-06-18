@@ -1,17 +1,16 @@
 package yjj.wetrash.domain.member.service;
 
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import yjj.wetrash.domain.member.dto.*;
 import yjj.wetrash.domain.member.entity.Member;
@@ -28,13 +27,9 @@ import yjj.wetrash.global.security.jwt.repository.RefreshTokenRepository;
 import yjj.wetrash.global.exception.CustomException;
 import yjj.wetrash.global.security.jwt.JwtTokenProvider;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
-import yjj.wetrash.global.security.jwt.dto.JwtTokenReqDTO;
-import yjj.wetrash.global.security.util.CookieUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.awt.SystemColor.info;
 
 @Service
 @RequiredArgsConstructor
@@ -158,13 +153,12 @@ public class MemberService {
         MemberReputation memberReputation = memberReputationRepository.findMemberReputationByMemberEmail(dto.getEmail())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
         //정지 회원일 경우
-        if (memberReputation.getMember().getMemberStatus() == MemberStatus.BANNED){
-            throw new CustomException(MemberErrorCode.BANNED_USER);
+        if (memberReputation.getMember().getMemberStatus() == MemberStatus.SUSPENDED){
+            throw new CustomException(MemberErrorCode.SUSPENDED_USER);
         }
         //핀 경고 +1 (및 상태 체크)
         memberReputation.addAdminWarning();
     }
-
 
 
 }

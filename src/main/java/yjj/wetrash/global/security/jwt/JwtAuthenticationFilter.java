@@ -1,6 +1,5 @@
 package yjj.wetrash.global.security.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,9 +59,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         MemberStatus memberStatus = customDetails.getMemberStatus();
         log.info("필터에서 회원 상태 출력: {}", memberStatus);
         //필터라 response 수동으로 만들어서 전송(403 에러코드를 받지 못함)
-        if (memberStatus == MemberStatus.BANNED){
+        if (memberStatus == MemberStatus.SUSPENDED){
             errorResponseWriter.write(response, 403,
-                    new ErrorResponse("BANNED_USER", "정지된 회원으로, 일부 기능이 제한됩니다."));
+                    new ErrorResponse(403, "정지된 회원으로, 일부 기능이 제한됩니다."));
             return true;
         }
         return false;

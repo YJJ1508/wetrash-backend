@@ -59,11 +59,17 @@ public class CustomDetails implements UserDetails, OAuth2User{
     public String getPassword() {
         return member.getPassword();
     }
+    public Member getMember(){
+        return member;
+    }
     public Role getRole(){
         return member.getRole();
     }
     public MemberStatus getMemberStatus(){
         return member.getMemberStatus();
+    }
+    public String getNickname(){
+        return member.getNickname();
     }
 
 
