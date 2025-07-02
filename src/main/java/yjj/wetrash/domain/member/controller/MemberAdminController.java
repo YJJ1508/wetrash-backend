@@ -29,11 +29,16 @@ public class MemberAdminController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/withdrawn")
+    public ResponseEntity<List<UserListDTO>> getWithdrawnUserList(){
+        List<UserListDTO> withdrawnUsers = memberService.getWithdrawnUsers();
+        return  ResponseEntity.ok(withdrawnUsers);
+    }
+
     @PostMapping("/warn")
     public ResponseEntity<Void> addWarning(@RequestBody MemberWarningReqDTO dto){
         memberService.addWarning(dto);
         return ResponseEntity.ok().build();
     }
-
 
 }

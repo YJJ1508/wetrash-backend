@@ -34,4 +34,6 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
     """, nativeQuery = true)
     List<Object[]> findTopMembersByPointInLastMonth(@Param("start") LocalDateTime start,
                                                     @Param("end") LocalDateTime end);
+
+    Optional<PointHistory> findByPin(Pin pin);
 }

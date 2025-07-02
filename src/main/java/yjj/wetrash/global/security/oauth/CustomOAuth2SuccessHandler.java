@@ -9,10 +9,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 import yjj.wetrash.domain.member.service.RefreshTokenService;
 import yjj.wetrash.global.security.jwt.JwtTokenProvider;
-import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
 import yjj.wetrash.global.security.util.CookieUtil;
 
 import java.io.IOException;
@@ -20,7 +18,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider tokenProvider;
     private final CookieUtil cookieUtil;

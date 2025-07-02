@@ -6,6 +6,7 @@ import org.springframework.cglib.core.Local;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.pin.dto.PinAdminUpdateReqDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,8 +62,24 @@ public class Pin {
         this.description = description;
         this.status = PinStatus.APPROVED;
     }
+
     public void updateOnReject(){
         this.status = PinStatus.REJECTED;
+    }
+    public void updateOnApproved(){
+        this.status = PinStatus.APPROVED;
+    }
+    public void updateOnRemoved(){
+        this.status = PinStatus.REMOVED;
+    }
+
+    public void updateApprovedPinByAdmin(PinAdminUpdateReqDTO dto){
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+        this.latitude = dto.getLatitude();
+        this.longitude = dto.getLongitude();
+        this.trashcanType1 = dto.getTrashType1();
+        this.trashcanType2 = dto.getTrashType2();
     }
 
 }

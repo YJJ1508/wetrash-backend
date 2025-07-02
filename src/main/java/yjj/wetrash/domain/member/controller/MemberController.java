@@ -46,11 +46,8 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
     }
 
-
-
     @PostMapping("/signIn")
     public ResponseEntity<JwtTokenDTO> signIn(@RequestBody @Valid LoginReqDTO loginReqDTO){
-        log.info("signin controller");
         JwtTokenDTO token = memberService.signIn(loginReqDTO);
         log.info("service 통과");
         ResponseCookie createCookie = cookieUtil.createCookie(token.getRefreshToken());
@@ -80,6 +77,12 @@ public class MemberController {
         return ResponseEntity.ok(userInfo);
     }
 
+    @PostMapping("/recover")
+    public ResponseEntity<Void> recoverMember(@RequestBody LoginReqDTO loginReqDTO){
+        String email = loginReqDTO.getEmail();
+        memberService.recoverMember(email);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

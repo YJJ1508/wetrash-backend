@@ -2,6 +2,7 @@ package yjj.wetrash.domain.pin.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.member.entity.Member;
 import yjj.wetrash.domain.member.entity.PointHistory;
@@ -21,6 +22,7 @@ import yjj.wetrash.global.security.CustomDetails;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PinReviewService {
 
     private final MemberRepository memberRepository;
@@ -37,9 +39,10 @@ public class PinReviewService {
                 .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
         PinReview pinReview = pinReviewReqDTO.toEntity(member, pin);
         pinReviewRepository.save(pinReview);
-
+        log.info("포인트 적립 전");
         //포인트 적립
         if (!pointHistoryRepository.existsByMemberAndPinAndPointReason(member, pin, PointReason.REVIEW)){
+            log.info("포인트 적립 if문 들어옴");
             PointHistory pointHistory = PointHistory.createForReview(member, pin);
             pointHistoryRepository.save(pointHistory);
             member.addPoint(pointHistory.getPoint()); //회원 포인트 add

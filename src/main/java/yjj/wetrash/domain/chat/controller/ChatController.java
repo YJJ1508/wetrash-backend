@@ -29,6 +29,7 @@ public class ChatController {
     //클라이언트가 websocket 으로 보낸 메세지 처리 (enter or send)
     @MessageMapping("/send")
     public void handleMessage(@RequestBody ChatMessageDTO chatMessageDTO, Principal principal){
+        log.info("돌고있다");
         chatService.processMessage(chatMessageDTO, principal);
     }
 

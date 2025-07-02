@@ -77,5 +77,11 @@ public class MemberMyPageController {
         return ResponseEntity.ok(tierDetail);
     }
 
+    @PostMapping("/withdraw")
+    public ResponseEntity<Void> withdrawMember(@AuthenticationPrincipal CustomDetails customDetails){
+        String email = customDetails.getName();
+        memberMyPageService.withdrawMember(email);
+        return ResponseEntity.ok().build();
+    }
 
 }

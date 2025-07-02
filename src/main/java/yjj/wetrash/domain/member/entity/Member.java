@@ -45,6 +45,10 @@ public class Member {
 
     private LocalDateTime suspendedAt;
 
+    @Column(name = "previous_status")
+    @Enumerated(EnumType.STRING)
+    private MemberStatus previousStatus; //탈퇴시 전 상태 기록용
+
     private int totalPoint; //포인트 적립
 
     @Builder
@@ -73,6 +77,14 @@ public class Member {
     public void reactivateStatus(){
         this.memberStatus = MemberStatus.NORMAL;
         this.suspendedAt = null;
+    }
+    public void setStatusToWithdrawn(MemberStatus previousStatus){
+        this.previousStatus = previousStatus;
+        this.memberStatus = MemberStatus.WITHDRAWN;
+    }
+    public void recoverWithdrawnMember(){
+        this.memberStatus = this.previousStatus;
+        this.previousStatus = null;
     }
 
     public void updateNickname(String nickname){

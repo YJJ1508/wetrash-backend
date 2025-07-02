@@ -22,8 +22,8 @@ public class PointDetailResDTO {
     private int point;
     @Enumerated(value = EnumType.STRING)
     private PointReason pointReason;
-    private String pin_title; //포인트 얻은 핀의 제목
-    private Long pin_id; //포인트 얻은 핀의 id
+    private String pinTitle; //포인트 얻은 핀의 제목
+    private Long pinId; //포인트 얻은 핀의 id
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
@@ -32,8 +32,8 @@ public class PointDetailResDTO {
                 .pointId(pointHistory.getId())
                 .point(pointHistory.getPoint())
                 .pointReason(pointHistory.getPointReason())
-                .pin_id(pointHistory.getPin().getId())
-                .pin_title(pointHistory.getPin().getTitle())
+                .pinId(pointHistory.getPin() == null ? null : pointHistory.getPin().getId())
+                .pinTitle(pointHistory.getPin() == null ? "(삭제된 핀)" : pointHistory.getPin().getTitle())
                 .createdAt(pointHistory.getCreatedAt())
                 .build();
     }

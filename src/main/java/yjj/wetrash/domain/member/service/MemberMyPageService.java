@@ -48,6 +48,9 @@ public class MemberMyPageService {
     //닉네임 수정
     @Transactional
     public void updateNickname(String email, String nickname){
+        if (memberRepository.existsByNickname(nickname)){
+            throw new CustomException(MemberErrorCode.USER_NICKNAME_ALREADY_EXISTS);
+        }
         Member member = getMember(email);
         member.updateNickname(nickname);
     }
@@ -97,6 +100,13 @@ public class MemberMyPageService {
                 .collect(Collectors.toList());
     }
 
+    //회원 탈퇴 (논리 삭제)
+    @Transactional
+    public void withdrawMember(String email){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        member.setStatusToWithdrawn(member.getMemberStatus());
+    }
 
 
 }

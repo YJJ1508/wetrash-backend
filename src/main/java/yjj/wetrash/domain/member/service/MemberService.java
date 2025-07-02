@@ -19,6 +19,7 @@ import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
 import yjj.wetrash.domain.member.util.ProfileImgUploader;
+import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.CustomUserDetailsService;
 import yjj.wetrash.global.security.jwt.entity.RefreshToken;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
@@ -55,6 +56,9 @@ public class MemberService {
         if (memberRepository.existsByEmail(signUpDTO.getEmail())){
             throw new CustomException(MemberErrorCode.USER_ALREADY_EXISTS);
         }
+        if (memberRepository.existsByNickname(signUpDTO.getNickname())){
+            throw new CustomException(MemberErrorCode.USER_NICKNAME_ALREADY_EXISTS);
+        }
         //비번 암호화
         String encP = bCryptPasswordEncoder.encode(signUpDTO.getPassword());
         //프로필 파일 저장 처리
@@ -78,6 +82,12 @@ public class MemberService {
                 loginReqDTO.getEmail(), loginReqDTO.getPassword());
         //사용자 pw 검증 -> Authentication 객체 반환. (매니저가 authenticate() -> CustomUserDetailsService 메서드 호출)
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        //회원 상태 검증 - 탈퇴 회원 예외
+        CustomDetails customDetails = (CustomDetails) authentication.getPrincipal();
+        MemberStatus memberStatus = customDetails.getMemberStatus();
+        if (memberStatus == MemberStatus.WITHDRAWN){
+            throw new CustomException(MemberErrorCode.WITHDRAWN_USER);
+        }
         //인증 정보를 기반으로 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
@@ -138,6 +148,7 @@ public class MemberService {
     @Transactional
     public List<UserListDTO> getAllUsers(){
         return memberRepository.findAllByRole(Role.USER).stream()
+                .filter(member -> member.getMemberStatus() != MemberStatus.WITHDRAWN)
                 .map(UserListDTO::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -147,6 +158,15 @@ public class MemberService {
                 .map(UserListDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public List<UserListDTO> getWithdrawnUsers(){
+        return memberRepository.findAllByRole(Role.USER).stream()
+                .filter(member -> member.getMemberStatus() == MemberStatus.WITHDRAWN)
+                .map(UserListDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void addWarning(MemberWarningReqDTO dto){
         log.info("email 출력: {}", dto.getEmail());
@@ -160,5 +180,12 @@ public class MemberService {
         memberReputation.addAdminWarning();
     }
 
+    //회원 탈퇴 복구
+    @Transactional
+    public void recoverMember(String email){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
+        member.recoverWithdrawnMember();
+    }
 
 }

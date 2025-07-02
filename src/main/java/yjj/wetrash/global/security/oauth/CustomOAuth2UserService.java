@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import yjj.wetrash.domain.member.entity.Member;
+import yjj.wetrash.domain.member.entity.MemberStatus;
+import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
+import yjj.wetrash.global.exception.CustomException;
 import yjj.wetrash.global.security.CustomDetails;
 
 import java.util.Map;
@@ -37,6 +41,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2UserDTO auth2UserDTO = OAuth2UserDTO.of(providerId, oauth2UserAttributes, userNameAttributeName);
         //회원가입 or 로그인
         Member member = getOrSave(auth2UserDTO);
+        if (member.getMemberStatus() == MemberStatus.WITHDRAWN){
+            OAuth2Error error = new OAuth2Error("WITHDRAWN_USER");
+            throw new OAuth2AuthenticationException(error, "WITHDRAWN_USER:" + member.getEmail());
+        }
         //회원 평판 생성 (부가 정보)
         if (!reputationExists(member)){
             memberReputationRepository.save(member.createReputation());

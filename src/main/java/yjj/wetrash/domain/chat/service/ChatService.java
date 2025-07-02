@@ -38,7 +38,6 @@ public class ChatService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
     private final ChatMessageRepository chatMessageRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public void processMessage(ChatMessageDTO messageDTO, Principal principal){
@@ -48,6 +47,7 @@ public class ChatService {
         //1.timestamp 설정
         messageDTO.setCreatedAt(LocalDateTime.now());
         //enter 일 경우 입장 메세지 셋
+        log.info("입장 출력 메세지 전 줄");
         if (messageDTO.getType() == MessageType.ENTER) {
             messageDTO.setMessage(member.getNickname() + "님이 입장하셨습니다.");
         }

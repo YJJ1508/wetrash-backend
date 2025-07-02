@@ -67,4 +67,9 @@ public class PointHistory {
     public void setCreatedAt(LocalDateTime createdAt){
         this.createdAt = createdAt;
     }
+
+    public void setPinToNull(){
+        this.pin = null;
+    }
+
 }

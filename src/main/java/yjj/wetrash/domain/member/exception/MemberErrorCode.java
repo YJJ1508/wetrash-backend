@@ -12,9 +12,11 @@ public enum MemberErrorCode implements ErrorCode {
     //FORBIDDEN(403) 정지 회원
     SUSPENDED_USER(HttpStatus.FORBIDDEN, "정지된 회원으로, 일부 기능이 제한됩니다."),
     WARNING_USER(HttpStatus.FORBIDDEN, "경고 상태인 사용자로, 일부 기능이 제한됩니다."),
+    WITHDRAWN_USER(HttpStatus.FORBIDDEN, "탈퇴한 계정입니다."),
 
     //CONFLICT(409) 이미 존재 하는 값일 때
-    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "존재하는 이메일입니다."),
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+    USER_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
 
     //NOT_FOUND(404) 존재 하지 않는 값일 때
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),

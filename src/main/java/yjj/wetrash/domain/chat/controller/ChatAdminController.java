@@ -19,8 +19,14 @@ public class ChatAdminController {
 
     private final ChatAdminService chatAdminService;
 
-    @GetMapping("/reports")
-    public ResponseEntity<List<ChatMessageAdminDTO>> getReports(){
+    @GetMapping("/reports-all")
+    public ResponseEntity<List<ChatMessageAdminDTO>> getAllReports(){
+        List<ChatMessageAdminDTO> DTOs = chatAdminService.getAllReports();
+        return ResponseEntity.ok(DTOs);
+    }
+
+    @GetMapping("/reports-flagged")
+    public ResponseEntity<List<ChatMessageAdminDTO>> getReportsOverFive(){
         List<ChatMessageAdminDTO> DTOs = chatAdminService.getReportMessagesGreaterThanCount();
         return ResponseEntity.ok(DTOs);
     }

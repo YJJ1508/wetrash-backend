@@ -31,9 +31,7 @@ public class PinService {
 
     private final MemberRepository memberRepository;
     private final PinRepository pinRepository;
-    private final MemberReputationRepository memberReputationRepository;
     private final PinReviewRepository pinReviewRepository;
-    private final PointHistoryRepository pointHistoryRepository;
     private static final double DUPLICATE_DISTANCE = 50.0; //50m 기준 반경
 
     @Transactional
@@ -69,68 +67,6 @@ public class PinService {
             }
         }
         return false;
-    }
-
-    @Transactional
-    public List<PinAdminResDTO> getPinsByStatus(String status){
-        PinStatus pinStatus = PinStatus.valueOf(status.toUpperCase());
-        return pinRepository.findAllByStatus(pinStatus).stream()
-                .map(PinAdminResDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    //관리자 승인 요청 핀 -> update
-    @Transactional
-    public void updateApprovalPins(List<PinApprovalReqDTO> dtos){
-        for (PinApprovalReqDTO  dto: dtos) {
-            // 1.pin 업데이트
-            Pin pin = pinRepository.findPinById(dto.getId())
-                    .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
-            pin.updateOnApprove(dto.getTitle(), dto.getDescription()); // title, description, status 수정
-            // 2.요청 회원 reputation 반영
-            MemberReputation memberR = memberReputationRepository.findMemberReputationByMemberEmail(dto.getEmail())
-                    .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
-            if (memberR.getMember().getRole() == Role.ADMIN){
-                return; //관리자 무시
-            }
-            memberR.approval();
-            //3.사용자 포인트 적립
-            Member member = memberRepository.findByEmail(dto.getEmail())
-                    .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
-            PointHistory pointHistory = PointHistory.createForPinApproval(member, pin);
-            pointHistoryRepository.save(pointHistory);
-            member.addPoint(pointHistory.getPoint()); //회원 포인트 +
-        }
-    }
-    @Transactional
-    public void updateRejectionPins(List<PinRejectionReqDTO> dtos) {
-        for (PinRejectionReqDTO dto: dtos){
-            // 1.pin 업데이트
-            Pin pin = pinRepository.findPinById(dto.getId())
-                    .orElseThrow(() -> new CustomException(PinErrorCode.PIN_NOT_FOUND));
-            pin.updateOnReject();
-            // 2.요청 회원 reputation 반영
-            MemberReputation memberR = memberReputationRepository.findMemberReputationByMemberEmail(dto.getEmail())
-                    .orElseThrow(() -> new CustomException(MemberErrorCode.USER_NOT_FOUND));
-            if (memberR.getMember().getRole() == Role.ADMIN){
-                return; //관리자 무시
-            }
-            memberR.rejection();
-        }
-    }
-
-    @Transactional
-    public void deleteApprovedPinsByAdmin(List<Long> pinIds){
-        pinIds.forEach(pinRepository::deleteById);
-    }
-
-    @Transactional
-    public List<AdminMemberReputationResDTO> getMemberReputations(){
-        return memberReputationRepository.findAll()
-                .stream()
-                .filter(mr -> mr.getMember().getRole() == Role.USER)
-                .map(AdminMemberReputationResDTO::fromEntity)
-                .collect(Collectors.toList());
     }
 
     @Transactional //지도 pg에 띄울 핀.

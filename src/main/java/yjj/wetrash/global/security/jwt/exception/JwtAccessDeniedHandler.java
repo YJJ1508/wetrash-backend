@@ -13,7 +13,8 @@ import java.io.IOException;
 public class JwtAccessDeniedHandler implements AccessDeniedHandler{
     //로그인 되었지만 해당 리소스 권한이 없을때 403에러 처리
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_FORBIDDEN);
     }
 }

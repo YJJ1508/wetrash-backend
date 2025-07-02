@@ -28,8 +28,7 @@ public class ChatMessageAdminDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime messageCreatedAt;
     private int reportCount;
-
-    private List<ChatMessageReportDetailDTO> reports;
+    private List<ChatMessageReportDetailDTO> reports; //5개 이상 신고건
 
     public static ChatMessageAdminDTO from(ChatMessage chatMessage, List<ChatMessageReport> chatMessageReport){
 
@@ -45,7 +44,8 @@ public class ChatMessageAdminDTO {
                 .message(chatMessage.getMessage())
                 .messageCreatedAt(chatMessage.getCreatedAt())
                 .reportCount(chatMessage.getReportCount())
-                .reports(reportDetailDTO)
+                .reports(reportDetailDTO) //신고 목록들
                 .build();
     }
+
 }
