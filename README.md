@@ -155,4 +155,4 @@ WE_TRASH는 위치 기반으로 주변 쓰레기통을 조회하는 서비스입
 <br><br>
 
 ## ERD 구조 🗃️ 
-
+<img width="800" height="800" alt="Image" src="https://github.com/user-attachments/assets/338438aa-3b15-4323-a43f-4214a5868fae" />
