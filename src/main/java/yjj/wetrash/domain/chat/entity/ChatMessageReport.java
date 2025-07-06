@@ -22,14 +22,19 @@ public class ChatMessageReport {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "chat_message_id", nullable = false)
     private ChatMessage reportedMessage;
 
     @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
     private Member reporter;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ReportReason reason;
 
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime reportedAt;
 
     @Builder

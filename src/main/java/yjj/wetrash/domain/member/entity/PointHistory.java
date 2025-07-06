@@ -25,18 +25,22 @@ public class PointHistory {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(nullable = false)
     private int point;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PointReason pointReason;
 
     @ManyToOne
+    @JoinColumn(name = "pin_id", nullable = true) //추후 핀 삭제될 수 있음
     private Pin pin; //어떤 pin에 관한건지 관리 차원에서 저장
 
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Builder

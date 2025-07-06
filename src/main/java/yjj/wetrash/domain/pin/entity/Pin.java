@@ -18,27 +18,35 @@ import java.util.List;
 public class Pin {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pin_id")
     private Long id;
 
+    @Column(nullable = false)
     private double latitude;
+
+    @Column(nullable = false)
     private double longitude;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
+
     @Column(name = "trashcan_type1")
     private String trashcanType1;   //일반쓰레기
     @Column(name = "trashcan_type2")
     private String trashcanType2;   //재활용쓰레기
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member requestMember; //핀 요청 유저
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PinStatus status;
 
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "pin")

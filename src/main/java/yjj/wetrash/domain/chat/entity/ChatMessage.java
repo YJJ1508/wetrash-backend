@@ -19,15 +19,20 @@ public class ChatMessage {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Long pinId;
 
     @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
     private Member sender;
 
+    @Column(nullable = false)
     private String message;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private int reportCount;
 
     @Builder

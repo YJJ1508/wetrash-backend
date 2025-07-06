@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -29,18 +28,21 @@ public class Member {
     private String nickname;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
     private String provider; //구글,네이버,카카오,자체 로그인
 
+    @Column(nullable = false)
     private String profile;
 
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "member_status")
+    @Column(name = "member_status", nullable = false)
     private MemberStatus memberStatus;
 
     private LocalDateTime suspendedAt;
@@ -49,6 +51,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberStatus previousStatus; //탈퇴시 전 상태 기록용
 
+    @Column(name = "total_point", nullable = false)
     private int totalPoint; //포인트 적립
 
     @Builder

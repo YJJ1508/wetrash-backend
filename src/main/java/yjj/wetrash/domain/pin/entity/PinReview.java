@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 public class PinReview {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pinReview_id")
     private Long id;
 
     @ManyToOne
@@ -30,10 +29,11 @@ public class PinReview {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(nullable = false)
     private String comment;
 
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate

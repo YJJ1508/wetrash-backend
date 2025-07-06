@@ -16,21 +16,23 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "pin_favorite",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"member_member_id", "pin_pin_id"})
+                @UniqueConstraint(columnNames = {"member_id", "pin_id"})
         })
 public class PinFavorite {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pinFavorite_id")
     private Long id;
 
     @ManyToOne
+    @Column(name = "pin_id", nullable = false)
     private Pin pin;
 
     @ManyToOne
+    @Column(name = "member_id", nullable = false)
     private Member member;
 
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
 }

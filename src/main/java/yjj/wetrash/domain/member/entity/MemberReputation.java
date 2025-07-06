@@ -16,6 +16,7 @@ public class MemberReputation {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     //지도 핀 관련 정지
