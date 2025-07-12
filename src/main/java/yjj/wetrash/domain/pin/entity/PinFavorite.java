@@ -24,11 +24,11 @@ public class PinFavorite {
     private Long id;
 
     @ManyToOne
-    @Column(name = "pin_id", nullable = false)
+    @JoinColumn(name = "pin_id", nullable = false)
     private Pin pin;
 
     @ManyToOne
-    @Column(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @CreatedDate
