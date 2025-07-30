@@ -19,7 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${file.access-url}")
     private String accessUrl;
 
-    @Value("${FILE_BASE_URL}")
+    @Value("${file.base-url}")
     private String baseUrl;
 
     @Bean
