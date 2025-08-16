@@ -9,7 +9,7 @@ public class CookieUtil {
     public ResponseCookie createCookie(String refreshToken){
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true) //XSS 방지
-                .secure(true)
+                //.secure(true)
                 .path("/")
                 .maxAge(7*24*60*60)
                 .sameSite("Strict") //csrf 방지
