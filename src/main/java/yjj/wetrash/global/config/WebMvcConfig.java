@@ -13,15 +13,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
-    @Value("${file.access-url}")
-    private String accessUrl;
-
-    @Value("${file.base-url}")
-    private String baseUrl;
-
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -37,10 +28,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
         };
     }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry
-                .addResourceHandler(accessUrl+"**")
-                .addResourceLocations("classpath:/static/uploads/");
-    }
 }

@@ -1,20 +1,16 @@
 package yjj.wetrash.domain.member.service;
 
-import jakarta.el.ELManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import yjj.wetrash.domain.member.dto.mypage.*;
 import yjj.wetrash.domain.member.entity.Member;
-import yjj.wetrash.domain.member.entity.PointHistory;
 import yjj.wetrash.domain.member.exception.MemberErrorCode;
 import yjj.wetrash.domain.member.repository.MemberRepository;
-import yjj.wetrash.domain.member.util.ProfileImgUploader;
-import yjj.wetrash.domain.pin.entity.PinReview;
+import yjj.wetrash.domain.member.util.S3ProfileUploader;
 import yjj.wetrash.domain.pin.repository.PinFavoriteRepository;
 import yjj.wetrash.domain.pin.repository.PinReviewRepository;
-import yjj.wetrash.domain.pin.service.PinReviewService;
 import yjj.wetrash.global.exception.CustomException;
 
 import java.util.List;
@@ -25,7 +21,7 @@ import java.util.stream.Collectors;
 public class MemberMyPageService {
 
     private final MemberRepository memberRepository;
-    private final ProfileImgUploader profileImgUploader;
+    private final S3ProfileUploader s3ProfileUploader;
     private final PinReviewRepository pinReviewRepository;
     private final PinFavoriteRepository pinFavoriteRepository;
     private final PointHistoryService pointHistoryService;
@@ -59,7 +55,7 @@ public class MemberMyPageService {
     @Transactional
     public void updateProfile(String email, MultipartFile multipartFile){
         Member member = getMember(email);
-        String profile = profileImgUploader.saveFile(multipartFile);
+        String profile = s3ProfileUploader.uploadFile(multipartFile);
         member.updateProfile(profile);
     }
 

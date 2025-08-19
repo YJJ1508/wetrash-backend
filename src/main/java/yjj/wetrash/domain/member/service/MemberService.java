@@ -4,7 +4,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,7 @@ import yjj.wetrash.domain.member.entity.MemberReputation;
 import yjj.wetrash.domain.member.entity.MemberStatus;
 import yjj.wetrash.domain.member.entity.Role;
 import yjj.wetrash.domain.member.repository.MemberReputationRepository;
-import yjj.wetrash.domain.member.util.ProfileImgUploader;
+import yjj.wetrash.domain.member.util.S3ProfileUploader;
 import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.CustomUserDetailsService;
 import yjj.wetrash.global.security.jwt.entity.RefreshToken;
@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MemberService {
 
+    @Value("${storage.profile.default-url}")
+    private String defaultProfile;
+
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -45,9 +48,9 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
     private final MemberReputationRepository memberReputationRepository;
-    private final ProfileImgUploader profileImgUploader;
+    private final S3ProfileUploader s3ProfileUploader;
 
-    private static final String DEFAULT_PROFILE = "http://localhost:8080/uploads/default_profile.png";
+//    private static final String DEFAULT_PROFILE = baseUrl+"/uploads/default_profile.png";
 
     //회원가입
     @Transactional
@@ -65,9 +68,9 @@ public class MemberService {
         String profileUrl;
         log.info("profile: {}", profile);
         if (profile != null && !profile.isEmpty()){
-            profileUrl = profileImgUploader.saveFile(profile);
+            profileUrl = s3ProfileUploader.uploadFile(profile);
         } else {
-            profileUrl = DEFAULT_PROFILE;
+            profileUrl = defaultProfile;
         }
         //회원 저장
         Member member = memberRepository.save(signUpDTO.toEntity(encP, profileUrl));

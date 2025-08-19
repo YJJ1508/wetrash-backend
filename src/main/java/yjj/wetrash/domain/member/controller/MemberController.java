@@ -1,7 +1,6 @@
 package yjj.wetrash.domain.member.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,22 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import yjj.wetrash.domain.member.dto.*;
-import yjj.wetrash.domain.member.dto.mypage.MemberProfileResDTO;
-import yjj.wetrash.domain.member.dto.mypage.NicknameCheckReqDTO;
-import yjj.wetrash.domain.member.service.MemberMyPageService;
 import yjj.wetrash.domain.member.service.MemberService;
 import yjj.wetrash.domain.member.service.PointHistoryService;
-import yjj.wetrash.domain.member.util.ProfileImgUploader;
 import yjj.wetrash.global.security.CustomDetails;
 import yjj.wetrash.global.security.jwt.dto.JwtTokenDTO;
-import yjj.wetrash.global.security.jwt.dto.JwtTokenReqDTO;
 import yjj.wetrash.global.security.util.CookieUtil;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
