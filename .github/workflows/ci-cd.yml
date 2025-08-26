@@ -36,6 +36,8 @@ jobs:
     #Docker 이미지 빌
     - name: Docker Image Build and Push
       run: |
+        # .env 파일을 Secrets에서 가져와서 생성
+        echo "${{ secrets.DOTENV_FILE }}" > .env
         docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wetrash-backend:latest .
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/wetrash-backend:latest
     #EC2 인스턴스 접속 및 실행(백엔드만)
