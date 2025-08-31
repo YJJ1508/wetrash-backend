@@ -29,12 +29,24 @@ WE_TRASH는 위치 기반으로 주변 쓰레기통을 조회하는 서비스입
 <table>
   <tr>
     <td><img width="300" alt="Image" src="https://github.com/user-attachments/assets/edebb700-c430-43c4-9b50-89880afa60b1" /></td>
+    <td><img width="300" height="300" alt="wetrash_지도_핀말풍선" src="https://github.com/user-attachments/assets/2029a13b-4e60-40f1-aff2-66e553b645b4" /></td>
+    <td><img width="300" height="300" alt="wetrash_지도_길찾기결과" src="https://github.com/user-attachments/assets/a88899ea-d074-4c9c-a715-32a46a6e6829" /></td>
+    <td><img width="300" height="300" alt="search_filter_distance" src="https://github.com/user-attachments/assets/1ac38778-c482-4d0b-8cd9-09a39791bc8f" /></td>
+  </tr>
+  <tr>
+    <td>지도페이지</td>
+    <td>핀</td>
+    <td>길찾기</td>
+    <td>핀 검색</td>
+  </tr>
+</table>
+<table>
+  <tr>
     <td><img width="300" alt="Image" src="https://github.com/user-attachments/assets/b3740d06-d763-49fe-8303-f19ea1fdc90b" /></td>
     <td><img width="300" alt="Image" src="https://github.com/user-attachments/assets/37ed5b2b-26c5-4d54-9db6-2a26c5210e01" /></td>
     <td><img width="300" alt="Image" src="https://github.com/user-attachments/assets/ebb99c62-b805-417b-8607-9350284999eb" /></td>
   </tr>
   <tr>
-    <td>지도페이지</td>
     <td>상세페이지</td>
     <td>핀요청</td>
     <td>실시간 채팅 신고</td>
@@ -87,6 +99,7 @@ WE_TRASH는 위치 기반으로 주변 쓰레기통을 조회하는 서비스입
 <br>
 **CI/CD** <br>
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=githubactions&logoColor=white&style=for-the-badge)
 ![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?logo=amazonaws&logoColor=white&style=for-the-badge)
 <br>
 **형상 관리** <br>
@@ -157,4 +170,5 @@ WE_TRASH는 위치 기반으로 주변 쓰레기통을 조회하는 서비스입
 
 ## ERD 구조 🗃️ 
 <img width="800" height="800" alt="Image" src="https://github.com/user-attachments/assets/338438aa-3b15-4323-a43f-4214a5868fae" />
+
 
